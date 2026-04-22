@@ -92,6 +92,32 @@ textarea {
   z-index: 1;
 }
 
+/* Mobile: full-bleed, app-like single column */
+.app-shell--viewport {
+  padding-left: max(1rem, env(safe-area-inset-left));
+  padding-right: max(1rem, env(safe-area-inset-right));
+  padding-bottom: max(2.5rem, env(safe-area-inset-bottom));
+}
+
+/* Desktop: “browser window” — distinct from phone full-bleed */
+@media (min-width: 900px) {
+  body {
+    padding: 1.25rem 1.25rem 2rem;
+  }
+
+  .app-shell--viewport {
+    margin: 0 auto;
+    padding: 0 2rem 3rem;
+    max-width: min(1200px, calc(100vw - 2.5rem));
+    border-radius: 20px;
+    background: linear-gradient(165deg, rgba(255, 255, 255, 0.58) 0%, rgba(240, 243, 252, 0.45) 45%, rgba(255, 255, 255, 0.28) 100%);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.65) inset, 0 0 0 1px rgba(12, 16, 32, 0.05),
+      0 28px 65px -24px rgba(15, 23, 42, 0.18);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+}
+
 .ambient-orb {
   position: fixed;
   width: 480px;
@@ -162,15 +188,33 @@ textarea {
   opacity: 0.038;
 }
 
-/* --- Header (buffalo on its own row for a large, legible mark) --- */
+/* --- Header (title → buffalo → tools) --- */
 .site-header {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.85rem;
-  padding: 0.65rem 0 1.35rem;
+  gap: 0.65rem;
+  padding: 0.5rem 0 1.35rem;
   border-bottom: 1px solid rgba(12, 16, 32, 0.06);
   margin-bottom: 0.5rem;
+}
+
+.site-header-title {
+  display: block;
+  text-align: center;
+  text-decoration: none;
+  color: inherit;
+  line-height: 1.15;
+  margin: 0 0 0.15rem;
+  padding: 0 0.5rem;
+}
+
+.site-header-title__wordmark {
+  font-family: var(--font-display);
+  font-size: clamp(1.15rem, 3.5vw, 1.55rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  color: var(--ink);
 }
 
 .site-header-bar {
@@ -180,6 +224,23 @@ textarea {
   justify-content: space-between;
   gap: 0.75rem 1rem;
   width: 100%;
+  padding-top: 0.2rem;
+  margin-top: 0.15rem;
+  border-top: 1px solid rgba(12, 16, 32, 0.05);
+}
+
+/* Bar: icon home link only; wordmark lives in site-header-title */
+.logo--icon-only {
+  flex-shrink: 0;
+  padding: 0.1rem 0;
+  gap: 0;
+}
+
+.logo--icon-only .logo-mark {
+  width: 36px;
+  height: 36px;
+  font-size: 0.95rem;
+  border-radius: 10px;
 }
 
 /* Top-center buffalo — size uses viewport so it’s clearly visible on all screens */
@@ -305,8 +366,48 @@ textarea {
 @media (min-width: 900px) {
   .hero-landing {
     grid-template-columns: 1.05fr 0.95fr;
-    align-items: start;
-    padding: 2.5rem 0 1rem;
+    align-items: stretch;
+    gap: 2.5rem;
+    padding: 2.25rem 0 1.25rem;
+  }
+
+  .hero-copy {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: clamp(1.5rem, 2.6vh, 2.4rem);
+    min-height: min(100%, 70vh);
+    padding: 0.25rem 0.25rem 0.75rem 0;
+    max-width: 38ch;
+  }
+
+  .hero-panel {
+    position: relative;
+    isolation: isolate;
+  }
+
+  /* Subtle column halo for the form on wide screens (desktop “browser” view) */
+  .hero-panel::before {
+    content: "";
+    position: absolute;
+    inset: -0.4rem;
+    border-radius: calc(var(--radius-lg) + 6px);
+    background: linear-gradient(160deg, rgba(255, 255, 255, 0.4), rgba(99, 102, 241, 0.05));
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .hero-panel > * {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+@media (max-width: 899px) {
+  .hero-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 1.15rem;
   }
 }
 
@@ -317,15 +418,27 @@ textarea {
   text-transform: uppercase;
   letter-spacing: 0.12em;
   color: var(--accent);
-  margin-bottom: 0.9rem;
+  margin-bottom: 0.35rem;
+}
+
+@media (min-width: 900px) {
+  .hero-eyebrow {
+    margin-bottom: 0.5rem;
+  }
 }
 
 .hero-title {
   font-size: clamp(2.1rem, 4.2vw, 3.1rem);
   font-weight: 700;
   line-height: 1.1;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.4rem;
   max-width: 16ch;
+}
+
+@media (min-width: 900px) {
+  .hero-title {
+    margin-bottom: 0.75rem;
+  }
 }
 
 .hero-tagline {
@@ -341,6 +454,12 @@ textarea {
   border-left: 3px solid rgba(180, 83, 9, 0.45);
   background: linear-gradient(90deg, rgba(180, 83, 9, 0.06), transparent 60%);
   border-radius: 0 10px 10px 0;
+}
+
+@media (min-width: 900px) {
+  .hero-tagline {
+    margin-bottom: 1.5rem;
+  }
 }
 
 .hero-sub-wink {
@@ -361,14 +480,30 @@ textarea {
   font-size: 1.1rem;
   color: var(--ink-soft);
   max-width: 40ch;
-  line-height: 1.65;
+  line-height: 1.7;
   margin: 0 0 1.5rem;
+}
+
+@media (min-width: 900px) {
+  .hero-sub {
+    max-width: 38ch;
+    margin-bottom: 0;
+    flex: 0 0 auto;
+  }
 }
 
 .trust-pills {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem 0.9rem;
+}
+
+@media (min-width: 900px) {
+  .trust-pills {
+    margin-top: auto;
+    padding-top: 0.5rem;
+    gap: 0.6rem 1rem;
+  }
 }
 
 .trust-pill {
@@ -604,6 +739,24 @@ textarea {
   color: var(--muted);
   line-height: 1.5;
   margin: 0.75rem 0 0;
+}
+
+.form-hint {
+  font-size: 0.8rem;
+  line-height: 1.5;
+  margin: 0.25rem 0 0.9rem;
+  color: var(--ink-soft);
+}
+.form-hint--step2 {
+  padding: 0.5rem 0.65rem;
+  border-radius: 10px;
+  background: rgba(180, 83, 9, 0.07);
+  border: 1px solid rgba(180, 83, 9, 0.2);
+  color: #5a4a2e;
+  margin-top: 0.35rem;
+}
+.form-hint--step2 strong {
+  color: #713f12;
 }
 
 .pay-form {

@@ -20,8 +20,13 @@ export default function App() {
           <div className="buffalo-atmosphere__mark buffalo-atmosphere__mark--1" />
           <div className="buffalo-atmosphere__mark buffalo-atmosphere__mark--2" />
         </div>
-        <div className="app-shell">
+        <div className="app-shell app-shell--viewport">
           <header className="site-header">
+            <a href="/" className="site-header-title" aria-label="BuffaloMoneySend home">
+              <span className="site-header-title__wordmark" translate="no">
+                Buffalo<span className="logo-wordmark-mid">Money</span>Send
+              </span>
+            </a>
             <div className="site-header-crest" aria-hidden="true">
               <div className="site-header-crest__ring">
                 <img
@@ -36,12 +41,9 @@ export default function App() {
               </div>
             </div>
             <div className="site-header-bar">
-              <a href="/" className="logo" aria-label="BuffaloMoneySend home">
+              <a href="/" className="logo logo--icon-only" aria-label="Home">
                 <span className="logo-mark" aria-hidden>
                   B
-                </span>
-                <span className="logo-wordmark" translate="no">
-                  Buffalo<span className="logo-wordmark-mid">Money</span>Send
                 </span>
               </a>
               <div className="header-meta">
@@ -69,7 +71,7 @@ export default function App() {
 
           <main>
             <div className="hero-landing" aria-labelledby="hero-title">
-              <div>
+              <div className="hero-copy">
                 <p className="hero-eyebrow">Cross-border · built to stay calm</p>
                 <h1 id="hero-title" className="hero-title">
                   <span className="gradient-text">Send money</span> you can count on
@@ -97,7 +99,7 @@ export default function App() {
                 </div>
               </div>
 
-              <div id="send" style={{ minWidth: 0 }}>
+              <div id="send" className="hero-panel" style={{ minWidth: 0 }}>
                 <TransferApp />
               </div>
             </div>

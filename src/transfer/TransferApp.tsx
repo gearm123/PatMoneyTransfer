@@ -99,14 +99,16 @@ export function TransferApp() {
     return () => clearTimeout(t);
   }, [refreshQuote]);
 
+  const accountDigits = localAccount.replace(/\D/g, "");
+
   const can1 = () => {
     const n = Number.parseFloat(amountStr);
     return n >= 1 && n <= 15000;
   };
   const can2 = () =>
-    recipientName.trim().length > 1 &&
-    localAccount.replace(/\D/g, "").length >= 8 &&
-    localAccount.replace(/\D/g, "").length <= 20;
+    recipientName.trim().length >= 2 &&
+    accountDigits.length >= 6 &&
+    accountDigits.length <= 20;
   const can3 = () => senderName.trim().length > 1 && senderEmail.includes("@");
 
   const goPreparePayment = async () => {
@@ -336,9 +338,25 @@ export function TransferApp() {
                 inputMode="numeric"
                 value={localAccount}
                 onChange={(e) => setLocalAccount(e.target.value)}
-                placeholder="Local account / IBAN format as required"
+                autoComplete="off"
+                placeholder="e.g. 1234567890 (6–20 digits; hyphens and spaces are OK)"
               />
             </div>
+            {!can2() && (
+              <p className="form-hint form-hint--step2" role="status">
+                {recipientName.trim().length < 2 && <span>Enter the account holder’s full name (at least 2 letters). </span>}
+                {recipientName.trim().length >= 2 && accountDigits.length < 6 && (
+                  <span>
+                    Account number: need at least <strong>6</strong> digits; only{" "}
+                    <strong className="mono">{accountDigits.length}</strong> counted
+                    {accountDigits.length > 0 ? " (dashes, spaces, and letters are ignored)." : " — type the digits, or a longer fake number like 1234567890."}
+                  </span>
+                )}
+                {recipientName.trim().length >= 2 && accountDigits.length > 20 && (
+                  <span>Use at most 20 digits in the account number.</span>
+                )}
+              </p>
+            )}
             <p className="disclaimer">Incorrect account details can delay or fail transfers; always double-check.</p>
             <div className="flow-actions">
               <button type="button" className="btn btn-ghost" onClick={() => setStep(1)}>
