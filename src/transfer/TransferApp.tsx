@@ -182,12 +182,26 @@ export function TransferApp() {
 
   if (step === 5 && doneTransfer) {
     return (
-      <div className="card-panel success-panel">
-        <div className="success-icon" aria-hidden>
+      <div className="card-panel success-panel success-panel--celebrate">
+        <div className="success-glitter" aria-hidden>
+          {Array.from({ length: 22 }, (_, i) => (
+            <span
+              key={i}
+              className="success-glitter__bit"
+              style={{
+                left: `${(i * 37) % 88 + 6}%`,
+                top: `${(i * 23) % 72 + 8}%`,
+                animationDelay: `${(i * 0.1).toFixed(2)}s`,
+              }}
+            />
+          ))}
+        </div>
+        <div className="success-icon success-icon--buffalo" aria-hidden>
           ✓
         </div>
-        <h2>Transfer received</h2>
+        <h2 className="success-headline">Amazing! You are now also a buffalo 😊</h2>
         <p className="success-herd-wink">Welcome to the herd—glad you sent with us today.</p>
+        <h3 className="success-subtitle">Transfer received</h3>
         <p>
           Reference <span className="mono">{doneTransfer.id}</span> — you sent{" "}
           <span className="mono">

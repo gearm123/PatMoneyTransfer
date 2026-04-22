@@ -43,11 +43,24 @@ export function CheckoutForm({ onDone, onError }: Props) {
   };
 
   return (
-    <form onSubmit={(e) => void handle(e)} className="pay-form">
-      <PaymentElement />
-      <button type="submit" className="btn btn-primary" disabled={!stripe || loading} style={{ marginTop: "1.25rem", width: "100%" }}>
-        {loading ? "Moving your payment through…" : "Pay securely"}
-      </button>
+    <form onSubmit={(e) => void handle(e)} className="pay-form" aria-busy={loading} data-processing={loading ? "true" : undefined}>
+      <div className="pay-form-shell">
+        <PaymentElement />
+        <button type="submit" className="btn btn-primary" disabled={!stripe || loading} style={{ marginTop: "1.25rem", width: "100%" }}>
+          {loading ? "Processing…" : "Pay securely"}
+        </button>
+        {loading && (
+          <div className="pay-processing" role="status" aria-live="polite" aria-atomic="true">
+            <div className="pay-processing__glow" aria-hidden />
+            <div className="pay-processing__bar-track">
+              <div className="pay-processing__bar-fill" />
+            </div>
+            <p className="pay-processing__message">
+              In a few moments, you will join the other happy buffaloes.
+            </p>
+          </div>
+        )}
+      </div>
     </form>
   );
 }
