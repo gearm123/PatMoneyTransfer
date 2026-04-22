@@ -21,6 +21,24 @@ export default function App() {
           <div className="buffalo-atmosphere__mark buffalo-atmosphere__mark--2" />
         </div>
         <div className="app-shell">
+          <div className="top-welcome" role="region" aria-label="Welcome to Buffalo Money">
+            <div className="top-welcome__copy">
+              <p className="top-welcome__line1">welcome to buffalo money</p>
+              <p className="top-welcome__line2">
+                join all the happy other buffalos and send your money today
+              </p>
+            </div>
+            <div className="top-welcome__icon-wrap" aria-hidden="true">
+              <img
+                className="top-welcome__buffalo"
+                src="/buffalo-silhouette.svg"
+                width={128}
+                height={70}
+                alt=""
+                decoding="async"
+              />
+            </div>
+          </div>
           <header className="site-header">
             <a href="/" className="logo" aria-label="BuffaloMoneySend home">
               <span className="logo-mark" aria-hidden>
