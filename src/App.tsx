@@ -55,25 +55,29 @@ export default function App() {
           <main>
             <div className="hero-landing" aria-labelledby="hero-title">
               <div>
-                <p className="hero-eyebrow">International remittance</p>
+                <p className="hero-eyebrow">Cross-border · built to stay calm</p>
                 <h1 id="hero-title" className="hero-title">
                   <span className="gradient-text">Send money</span> you can count on
                 </h1>
-                <p className="hero-tagline">Transfer money and join the buffalo community</p>
+                <p className="hero-tagline">Send money today and join the buffalo community</p>
                 <p className="hero-sub">
-                  <strong>BuffaloMoneySend</strong> is built for people who need a straightforward way to
-                  support family, friends, and business across borders—clear pricing, a calm experience,
-                  and card checkout when you connect your payment keys.
+                  <strong>BuffaloMoneySend</strong> is for people who need to support family, friends, and
+                  business across borders—upfront numbers, a quiet interface, and card checkout. We keep
+                  things calm: the important updates, not a{" "}
+                  <span className="hero-sub-wink" title="If you get the name, you get the joke.">
+                    notification stampede
+                  </span>
+                  .
                 </p>
                 <div className="trust-pills">
                   <span className="trust-pill">
-                    <span aria-hidden>✦</span> Encrypted checkout
+                    <span aria-hidden>✦</span> Steady, secure card checkout
                   </span>
                   <span className="trust-pill">
-                    <span aria-hidden>⏱</span> Upfront estimate
+                    <span aria-hidden>⏱</span> See the route before you pay
                   </span>
                   <span className="trust-pill">
-                    <span aria-hidden>🌐</span> Corridors you choose
+                    <span aria-hidden>·</span> A growing community, not a stampede of email
                   </span>
                 </div>
               </div>
@@ -88,6 +92,10 @@ export default function App() {
                 BuffaloMoneySend
               </span>{" "}
               — demo build. Add compliance, KYC, and a payout provider before live use.
+              <span className="footer-motto">
+                {" "}
+                (The herd is metaphorical. The send is real.)
+              </span>
             </footer>
           </main>
         </div>

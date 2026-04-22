@@ -41,7 +41,8 @@ body {
   background-image:
     radial-gradient(ellipse 120% 80% at 0% 0%, rgba(99, 102, 241, 0.14), transparent 50%),
     radial-gradient(ellipse 90% 60% at 100% 10%, rgba(45, 212, 191, 0.1), transparent 45%),
-    radial-gradient(ellipse 60% 50% at 50% 100%, rgba(99, 102, 241, 0.06), transparent 55%);
+    radial-gradient(ellipse 60% 50% at 50% 100%, rgba(99, 102, 241, 0.06), transparent 55%),
+    radial-gradient(ellipse 70% 50% at 90% 95%, rgba(180, 83, 9, 0.09), transparent 50%);
   background-attachment: fixed;
 }
 
@@ -277,11 +278,22 @@ textarea {
   font-family: var(--font-display);
   font-size: clamp(0.95rem, 1.2vw, 1.1rem);
   font-weight: 500;
-  color: var(--muted);
+  color: #5c4a2e;
   letter-spacing: 0.02em;
   line-height: 1.45;
   margin: 0 0 1.2rem;
-  max-width: 42ch;
+  max-width: min(100%, 44ch);
+  padding: 0.4rem 0.65rem;
+  border-left: 3px solid rgba(180, 83, 9, 0.45);
+  background: linear-gradient(90deg, rgba(180, 83, 9, 0.06), transparent 60%);
+  border-radius: 0 10px 10px 0;
+}
+
+.hero-sub-wink {
+  font-style: italic;
+  color: #5a4a35;
+  border-bottom: 1px dotted rgba(180, 83, 9, 0.4);
+  cursor: help;
 }
 
 .gradient-text {
@@ -324,6 +336,7 @@ textarea {
 
 /* --- Card / form --- */
 .card-panel {
+  position: relative;
   background: var(--surface);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
@@ -331,6 +344,17 @@ textarea {
   box-shadow: var(--shadow-glass);
   border: 1px solid rgba(255, 255, 255, 0.7);
   overflow: hidden;
+}
+.card-panel::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 10%;
+  right: 10%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(180, 83, 9, 0.45) 20%, rgba(99, 102, 241, 0.35) 80%, transparent);
+  border-radius: 1px;
+  pointer-events: none;
 }
 
 .btn {
@@ -395,6 +419,15 @@ textarea {
   font-weight: 600;
   color: var(--ink);
   letter-spacing: -0.02em;
+}
+
+.send-flow-motto {
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--muted);
+  font-style: italic;
+  margin: 0.35rem 0 0;
+  max-width: 32ch;
 }
 
 .step-tracker {
@@ -544,6 +577,16 @@ textarea {
   margin-bottom: 0.5rem;
   color: var(--ink);
 }
+.success-panel p.success-herd-wink {
+  color: #5c4a2e;
+  font-weight: 500;
+  font-size: 0.95rem;
+  font-style: italic;
+  margin: 0 0 0.75rem;
+  max-width: 32ch;
+  margin-left: auto;
+  margin-right: auto;
+}
 .success-panel p {
   color: var(--ink-soft);
   margin: 0 0 1.25rem;
@@ -569,6 +612,18 @@ textarea {
   font-size: 0.8rem;
   color: var(--muted);
   text-align: center;
+  max-width: 52ch;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.footer-motto {
+  display: block;
+  font-size: 0.75rem;
+  color: #7a6d55;
+  font-style: italic;
+  margin-top: 0.45rem;
+  line-height: 1.45;
 }
 
 .footer-brand {

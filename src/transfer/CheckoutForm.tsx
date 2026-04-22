@@ -46,7 +46,7 @@ export function CheckoutForm({ onDone, onError }: Props) {
     <form onSubmit={(e) => void handle(e)} className="pay-form">
       <PaymentElement />
       <button type="submit" className="btn btn-primary" disabled={!stripe || loading} style={{ marginTop: "1.25rem", width: "100%" }}>
-        {loading ? "Processing…" : "Pay securely"}
+        {loading ? "Moving your payment through…" : "Pay securely"}
       </button>
     </form>
   );

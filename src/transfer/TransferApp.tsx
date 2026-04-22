@@ -154,13 +154,17 @@ export function TransferApp() {
           BuffaloMoneySend
         </p>
         <h2>Connect payments</h2>
+        <p className="send-flow-motto" style={{ maxWidth: "24rem", marginLeft: "auto", marginRight: "auto" }}>
+          Keys in, herd ready—connect Stripe to try a send.
+        </p>
         <p className="hero-sub" style={{ maxWidth: "32rem", margin: "0.5rem auto 0" }}>
           Add <code className="mono">STRIPE_SECRET_KEY</code> in <code className="mono">server/.env</code>{" "}
           and <code className="mono">VITE_STRIPE_PUBLISHABLE_KEY</code> in the project <code className="mono">.env</code> (from the Stripe
           dashboard, e.g. pk_test_...).
         </p>
         <p className="disclaimer" style={{ marginTop: "1rem" }}>
-          Run the API on port 4000; Vite proxies <code className="mono">/api</code>.
+          Run the API on port 4000; Vite proxies <code className="mono">/api</code>. (Then you can welcome
+          your first test send to the community.)
         </p>
       </div>
     );
@@ -169,7 +173,7 @@ export function TransferApp() {
   if (configOk === null) {
     return (
       <div className="card-panel" style={{ padding: "2.5rem", textAlign: "center" }}>
-        <p style={{ margin: 0, color: "var(--muted)" }}>Preparing your transfer…</p>
+        <p style={{ margin: 0, color: "var(--muted)" }}>Rounding up the essentials…</p>
       </div>
     );
   }
@@ -181,6 +185,7 @@ export function TransferApp() {
           ✓
         </div>
         <h2>Transfer received</h2>
+        <p className="success-herd-wink">Welcome to the herd—glad you sent with us today.</p>
         <p>
           Reference <span className="mono">{doneTransfer.id}</span> — you sent{" "}
           <span className="mono">
@@ -223,6 +228,7 @@ export function TransferApp() {
             BuffaloMoneySend
           </p>
           <h2 className="send-flow-title">Start your send</h2>
+          <p className="send-flow-motto">The community grows one send at a time. Yours is next.</p>
           {step >= 1 && step <= 4 && <StepTracker current={step as 1 | 2 | 3 | 4} />}
         </div>
         {err && (
@@ -255,7 +261,7 @@ export function TransferApp() {
               </select>
             </div>
             <p className="disclaimer" style={{ margin: "0 0 0.5rem" }}>
-              Additional corridors can be enabled in the product as you expand.
+              New corridors can migrate in as you expand the product.
             </p>
             <div className="field-row">
               <div className="field">
@@ -380,7 +386,8 @@ export function TransferApp() {
           <div className="flow-step">
             <h3>Secure card payment</h3>
             <p className="disclaimer" style={{ margin: "0 0 0.75rem" }}>
-              Test: <span className="mono">4242 4242 4242 4242</span>, any future date, any CVC.
+              Almost across the range—use test card <span className="mono">4242 4242 4242 4242</span>, any
+              future date, any CVC.
             </p>
             <Elements key={clientSecret} stripe={stripePromise} options={options}>
               <CheckoutForm onError={(m) => setErr(m)} onDone={onPaid} />
