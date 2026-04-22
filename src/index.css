@@ -88,6 +88,7 @@ textarea {
   margin: 0 auto;
   padding: 0 1.5rem 3.5rem;
   position: relative;
+  z-index: 1;
 }
 
 .ambient-orb {
@@ -119,6 +120,47 @@ textarea {
   z-index: 1;
 }
 
+/* Subtle buffalo silhouettes — texture, not illustration */
+.buffalo-atmosphere {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.buffalo-atmosphere__mark {
+  position: absolute;
+  background: url("/buffalo-silhouette.svg") no-repeat center;
+  background-size: contain;
+  opacity: 0.052;
+  mix-blend-mode: multiply;
+  filter: blur(0.6px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .buffalo-atmosphere__mark {
+    filter: none;
+  }
+}
+
+.buffalo-atmosphere__mark--1 {
+  width: min(78vw, 560px);
+  height: min(42vw, 300px);
+  bottom: -6%;
+  right: -14%;
+  transform: rotate(-7deg);
+}
+
+.buffalo-atmosphere__mark--2 {
+  width: min(52vw, 380px);
+  height: min(30vw, 210px);
+  top: 5%;
+  left: -12%;
+  transform: rotate(9deg) scaleX(-1);
+  opacity: 0.038;
+}
+
 /* --- Header --- */
 .site-header {
   display: flex;
@@ -147,12 +189,25 @@ textarea {
   width: 40px;
   height: 40px;
   border-radius: 12px;
-  background: linear-gradient(140deg, var(--accent-2) 0%, #4338ca 100%);
+  background: linear-gradient(140deg, #1e3a5f 0%, #4338ca 50%, #b45309 100%);
   display: grid;
   place-items: center;
   color: #fff;
-  font-size: 1.15rem;
-  box-shadow: 0 4px 14px var(--accent-glow);
+  font-size: 1.05rem;
+  font-weight: 800;
+  font-family: var(--font-display);
+  box-shadow: 0 4px 16px rgba(30, 58, 95, 0.35);
+}
+
+.logo-wordmark {
+  font-size: clamp(0.95rem, 2.4vw, 1.2rem);
+  color: var(--ink);
+  letter-spacing: -0.03em;
+}
+
+.logo-wordmark-mid {
+  color: #b45309;
+  font-weight: 700;
 }
 
 .header-meta {
@@ -214,12 +269,23 @@ textarea {
   font-size: clamp(2.1rem, 4.2vw, 3.1rem);
   font-weight: 700;
   line-height: 1.1;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
   max-width: 16ch;
 }
 
+.hero-tagline {
+  font-family: var(--font-display);
+  font-size: clamp(0.95rem, 1.2vw, 1.1rem);
+  font-weight: 500;
+  color: var(--muted);
+  letter-spacing: 0.02em;
+  line-height: 1.45;
+  margin: 0 0 1.2rem;
+  max-width: 42ch;
+}
+
 .gradient-text {
-  background: linear-gradient(120deg, #3730a3, #4f46e5, #0d9488);
+  background: linear-gradient(120deg, #1e3a5f, #4f46e5, #b45309);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -503,6 +569,13 @@ textarea {
   font-size: 0.8rem;
   color: var(--muted);
   text-align: center;
+}
+
+.footer-brand {
+  font-weight: 700;
+  color: var(--ink);
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
 }
 
 .mono {

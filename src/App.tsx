@@ -16,13 +16,19 @@ export default function App() {
       <div className="ambient-orb ambient-orb--1" aria-hidden />
       <div className="ambient-orb ambient-orb--2" aria-hidden />
       <div className="app-inner">
+        <div className="buffalo-atmosphere" aria-hidden="true">
+          <div className="buffalo-atmosphere__mark buffalo-atmosphere__mark--1" />
+          <div className="buffalo-atmosphere__mark buffalo-atmosphere__mark--2" />
+        </div>
         <div className="app-shell">
           <header className="site-header">
-            <a href="/" className="logo">
+            <a href="/" className="logo" aria-label="BuffaloMoneySend home">
               <span className="logo-mark" aria-hidden>
-                ∞
+                B
               </span>
-              GlobalSend
+              <span className="logo-wordmark" translate="no">
+                Buffalo<span className="logo-wordmark-mid">Money</span>Send
+              </span>
             </a>
             <div className="header-meta">
               {api && (
@@ -49,14 +55,15 @@ export default function App() {
           <main>
             <div className="hero-landing" aria-labelledby="hero-title">
               <div>
-                <p className="hero-eyebrow">Global transfers</p>
+                <p className="hero-eyebrow">International remittance</p>
                 <h1 id="hero-title" className="hero-title">
-                  <span className="gradient-text">Move money</span> with clarity
+                  <span className="gradient-text">Send money</span> you can count on
                 </h1>
+                <p className="hero-tagline">Transfer money and join the buffalo community</p>
                 <p className="hero-sub">
-                  A focused checkout for international sends: you choose the corridor, we keep the
-                  experience calm and the numbers transparent. Bank-grade card handling when you connect
-                  your keys.
+                  <strong>BuffaloMoneySend</strong> is built for people who need a straightforward way to
+                  support family, friends, and business across borders—clear pricing, a calm experience,
+                  and card checkout when you connect your payment keys.
                 </p>
                 <div className="trust-pills">
                   <span className="trust-pill">
@@ -66,7 +73,7 @@ export default function App() {
                     <span aria-hidden>⏱</span> Upfront estimate
                   </span>
                   <span className="trust-pill">
-                    <span aria-hidden>🌐</span> Built to add corridors
+                    <span aria-hidden>🌐</span> Corridors you choose
                   </span>
                 </div>
               </div>
@@ -77,8 +84,10 @@ export default function App() {
             </div>
 
             <footer className="site-footer">
-              Demo for development. Add your own compliance, KYC, and payout provider before any live
-              use.
+              <span className="footer-brand" translate="no">
+                BuffaloMoneySend
+              </span>{" "}
+              — demo build. Add compliance, KYC, and a payout provider before live use.
             </footer>
           </main>
         </div>

@@ -150,6 +150,9 @@ export function TransferApp() {
   if (configOk === false) {
     return (
       <div className="card-panel config-empty">
+        <p className="send-flow-eyebrow" style={{ marginBottom: "0.35rem" }} translate="no">
+          BuffaloMoneySend
+        </p>
         <h2>Connect payments</h2>
         <p className="hero-sub" style={{ maxWidth: "32rem", margin: "0.5rem auto 0" }}>
           Add <code className="mono">STRIPE_SECRET_KEY</code> in <code className="mono">server/.env</code>{" "}
@@ -216,7 +219,9 @@ export function TransferApp() {
     <div className="card-panel" style={{ overflow: "hidden" }}>
       <div className="send-flow">
         <div className="send-flow-top">
-          <p className="send-flow-eyebrow">Transfer</p>
+          <p className="send-flow-eyebrow" translate="no">
+            BuffaloMoneySend
+          </p>
           <h2 className="send-flow-title">Start your send</h2>
           {step >= 1 && step <= 4 && <StepTracker current={step as 1 | 2 | 3 | 4} />}
         </div>
