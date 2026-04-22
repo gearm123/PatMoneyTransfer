@@ -99,22 +99,74 @@ textarea {
   padding-bottom: max(2.5rem, env(safe-area-inset-bottom));
 }
 
-/* Desktop: “browser window” — distinct from phone full-bleed */
+/* Desktop: “browser window” — one viewport, no page scroll; inner areas scroll if needed */
 @media (min-width: 900px) {
+  html {
+    height: 100%;
+  }
+
   body {
-    padding: 1.25rem 1.25rem 2rem;
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+    padding: 0.6rem 1rem 0.75rem;
+  }
+
+  #root {
+    min-height: 0;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .app-inner {
+    min-height: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
   }
 
   .app-shell--viewport {
     margin: 0 auto;
-    padding: 0 2rem 3rem;
-    max-width: min(1200px, calc(100vw - 2.5rem));
-    border-radius: 20px;
-    background: linear-gradient(165deg, rgba(255, 255, 255, 0.58) 0%, rgba(240, 243, 252, 0.45) 45%, rgba(255, 255, 255, 0.28) 100%);
-    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.65) inset, 0 0 0 1px rgba(12, 16, 32, 0.05),
-      0 28px 65px -24px rgba(15, 23, 42, 0.18);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding: 0.5rem 1.75rem 0.55rem;
+    max-width: min(1200px, calc(100vw - 2rem));
+    border-radius: 22px;
+    background: linear-gradient(168deg, rgba(255, 255, 255, 0.78) 0%, rgba(240, 244, 255, 0.52) 42%, rgba(255, 255, 255, 0.32) 100%);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.7) inset, 0 0 0 1px rgba(12, 16, 32, 0.06),
+      0 32px 70px -28px rgba(15, 23, 42, 0.2);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+
+  .app-main {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .hero-copy,
+  .hero-panel .card-panel--send .send-flow {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(99, 102, 241, 0.35) transparent;
+  }
+
+  .hero-copy::-webkit-scrollbar,
+  .hero-panel .card-panel--send .send-flow::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .hero-copy::-webkit-scrollbar-thumb,
+  .hero-panel .card-panel--send .send-flow::-webkit-scrollbar-thumb {
+    background: rgba(99, 102, 241, 0.28);
+    border-radius: 99px;
   }
 }
 
@@ -188,7 +240,7 @@ textarea {
   opacity: 0.038;
 }
 
-/* --- Header (title → buffalo → tools) --- */
+/* --- Header (wordmark+crest+tools) --- */
 .site-header {
   display: flex;
   flex-direction: column;
@@ -197,6 +249,43 @@ textarea {
   padding: 0.5rem 0 1.35rem;
   border-bottom: 1px solid rgba(12, 16, 32, 0.06);
   margin-bottom: 0.5rem;
+}
+
+@media (min-width: 900px) {
+  .site-header {
+    padding: 0.25rem 0 0.5rem;
+    margin-bottom: 0.2rem;
+    gap: 0.4rem;
+  }
+}
+
+.site-header-brand {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  text-decoration: none;
+  color: inherit;
+  line-height: 1.1;
+  padding: 0.2rem 0.5rem;
+  border-radius: 14px;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+
+.site-header-brand:hover {
+  text-decoration: none;
+  color: inherit;
+  background: rgba(99, 102, 241, 0.06);
+  box-shadow: 0 0 0 1px rgba(99, 102, 241, 0.12);
+}
+
+.site-header-brand .logo-mark {
+  width: 38px;
+  height: 38px;
+  font-size: 1rem;
+  border-radius: 11px;
+  box-shadow: 0 3px 14px rgba(30, 58, 95, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.2) inset;
 }
 
 .site-header-title {
@@ -221,11 +310,11 @@ textarea {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   gap: 0.75rem 1rem;
   width: 100%;
   padding-top: 0.2rem;
-  margin-top: 0.15rem;
+  margin-top: 0.1rem;
   border-top: 1px solid rgba(12, 16, 32, 0.05);
 }
 
@@ -284,6 +373,15 @@ textarea {
 @media (min-width: 600px) {
   .site-header-crest__img {
     object-position: 50% 30%;
+  }
+}
+
+@media (min-width: 900px) {
+  .site-header-crest__ring {
+    width: clamp(4rem, 16vh, 6.5rem);
+    height: clamp(4rem, 16vh, 6.5rem);
+    max-width: min(6.5rem, 32vw);
+    max-height: min(6.5rem, 32vw);
   }
 }
 
@@ -365,28 +463,42 @@ textarea {
 
 @media (min-width: 900px) {
   .hero-landing {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: grid;
     grid-template-columns: 1.05fr 0.95fr;
     align-items: stretch;
-    gap: 2.5rem;
-    padding: 2.25rem 0 1.25rem;
+    gap: 1.15rem 1.75rem;
+    padding: 0.4rem 0 0.35rem;
+    overflow: hidden;
+  }
+
+  .hero-landing > * {
+    min-height: 0;
   }
 
   .hero-copy {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    gap: clamp(1.5rem, 2.6vh, 2.4rem);
-    min-height: min(100%, 70vh);
-    padding: 0.25rem 0.25rem 0.75rem 0;
-    max-width: 38ch;
+    justify-content: flex-start;
+    gap: clamp(0.5rem, 1.2vh, 1rem);
+    min-height: 0;
+    overflow-y: auto;
+    padding: 0.15rem 0.4rem 0.35rem 0;
+    max-width: 40ch;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
   }
 
   .hero-panel {
     position: relative;
     isolation: isolate;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
   }
 
-  /* Subtle column halo for the form on wide screens (desktop “browser” view) */
   .hero-panel::before {
     content: "";
     position: absolute;
@@ -400,6 +512,38 @@ textarea {
   .hero-panel > * {
     position: relative;
     z-index: 1;
+  }
+
+  .hero-panel .card-panel {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .hero-panel .card-panel--send .send-flow {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+  }
+
+  .hero-panel .card-panel:not(.card-panel--send) {
+    overflow-y: auto;
+  }
+
+  .site-footer {
+    margin-top: 0.4rem;
+    padding-top: 0.5rem;
+    font-size: 0.72rem;
+    line-height: 1.45;
+  }
+
+  .footer-motto {
+    display: inline;
+    margin-top: 0;
+    margin-left: 0.25rem;
   }
 }
 
@@ -437,7 +581,8 @@ textarea {
 
 @media (min-width: 900px) {
   .hero-title {
-    margin-bottom: 0.75rem;
+    font-size: clamp(1.7rem, 2.1vw, 2.45rem);
+    margin-bottom: 0.4rem;
   }
 }
 
@@ -458,7 +603,7 @@ textarea {
 
 @media (min-width: 900px) {
   .hero-tagline {
-    margin-bottom: 1.5rem;
+    margin-bottom: 0.65rem;
   }
 }
 
@@ -487,6 +632,8 @@ textarea {
 @media (min-width: 900px) {
   .hero-sub {
     max-width: 38ch;
+    font-size: 0.95rem;
+    line-height: 1.6;
     margin-bottom: 0;
     flex: 0 0 auto;
   }
@@ -500,9 +647,9 @@ textarea {
 
 @media (min-width: 900px) {
   .trust-pills {
-    margin-top: auto;
-    padding-top: 0.5rem;
-    gap: 0.6rem 1rem;
+    margin-top: 0.35rem;
+    padding-top: 0.15rem;
+    gap: 0.45rem 0.75rem;
   }
 }
 

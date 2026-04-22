@@ -22,7 +22,10 @@ export default function App() {
         </div>
         <div className="app-shell app-shell--viewport">
           <header className="site-header">
-            <a href="/" className="site-header-title" aria-label="BuffaloMoneySend home">
+            <a href="/" className="site-header-brand" aria-label="BuffaloMoneySend home">
+              <span className="logo-mark" aria-hidden>
+                B
+              </span>
               <span className="site-header-title__wordmark" translate="no">
                 Buffalo<span className="logo-wordmark-mid">Money</span>Send
               </span>
@@ -41,11 +44,6 @@ export default function App() {
               </div>
             </div>
             <div className="site-header-bar">
-              <a href="/" className="logo logo--icon-only" aria-label="Home">
-                <span className="logo-mark" aria-hidden>
-                  B
-                </span>
-              </a>
               <div className="header-meta">
                 {api && (
                   <span
@@ -69,7 +67,7 @@ export default function App() {
             </div>
           </header>
 
-          <main>
+          <main className="app-main">
             <div className="hero-landing" aria-labelledby="hero-title">
               <div className="hero-copy">
                 <p className="hero-eyebrow">Cross-border · built to stay calm</p>

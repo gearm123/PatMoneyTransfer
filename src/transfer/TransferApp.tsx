@@ -223,7 +223,7 @@ export function TransferApp() {
   }
 
   return (
-    <div className="card-panel" style={{ overflow: "hidden" }}>
+    <div className="card-panel card-panel--send">
       <div className="send-flow">
         <div className="send-flow-top">
           <p className="send-flow-eyebrow" translate="no">
