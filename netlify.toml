@@ -6,3 +6,15 @@
 [build.environment]
   # Node 20 LTS is a safe default for Vite 5; Netlify can override
   NODE_VERSION = "20"
+  # Baked into the Vite build — must point at your Render (or other) API origin, no path, no trailing slash
+  VITE_API_BASE = "https://buffalo-money-send-backend.onrender.com"
+
+# Optional: if your API is on another host and you do NOT set VITE_API_BASE, you can
+# forward /api to it (uncomment and set the URL, then the browser can use same-origin /api):
+# [[redirects]]
+#   from = "/api/*"
+#   to = "https://YOUR-API-HOST.com/api/:splat"
+#   status = 200
+#   force = true
+#
+# Usually simpler: set VITE_API_BASE to YOUR-API-HOST in Netlify env and rebuild the site.
