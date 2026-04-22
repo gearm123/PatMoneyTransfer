@@ -1,16 +1,6 @@
-import { useEffect, useState } from "react";
-import { getHealth } from "./api/client";
 import { TransferApp } from "./transfer/TransferApp";
 
 export default function App() {
-  const [api, setApi] = useState<string | null>(null);
-
-  useEffect(() => {
-    getHealth()
-      .then((h) => setApi(h.stripe === true ? "ok" : "partial"))
-      .catch(() => setApi("offline"));
-  }, []);
-
   return (
     <>
       <div className="ambient-orb ambient-orb--1" aria-hidden />
@@ -41,28 +31,6 @@ export default function App() {
                   loading="eager"
                   decoding="async"
                 />
-              </div>
-            </div>
-            <div className="site-header-bar">
-              <div className="header-meta">
-                {api && (
-                  <span
-                    className={`pill-ghost ${
-                      api === "ok" ? "pill-ghost--ok" : api === "offline" ? "pill-ghost--bad" : ""
-                    }`}
-                  >
-                    {api === "ok" ? "API online" : api === "offline" ? "Start backend" : "Stripe not set"}
-                  </span>
-                )}
-                <a
-                  className="nav-links"
-                  href="https://docs.stripe.com/testing"
-                  target="_blank"
-                  rel="noreferrer"
-                  style={{ fontSize: "0.85rem" }}
-                >
-                  Test cards
-                </a>
               </div>
             </div>
           </header>
@@ -106,11 +74,7 @@ export default function App() {
               <span className="footer-brand" translate="no">
                 BuffaloMoneySend
               </span>{" "}
-              — demo build. Add compliance, KYC, and a payout provider before live use.
-              <span className="footer-motto">
-                {" "}
-                (The herd is metaphorical. The send is real.)
-              </span>
+              <span className="footer-motto">(The herd is metaphorical. The send is real.)</span>
             </footer>
           </main>
         </div>
