@@ -22,46 +22,48 @@ export default function App() {
         </div>
         <div className="app-shell">
           <header className="site-header">
-            <a href="/" className="logo" aria-label="BuffaloMoneySend home">
-              <span className="logo-mark" aria-hidden>
-                B
-              </span>
-              <span className="logo-wordmark" translate="no">
-                Buffalo<span className="logo-wordmark-mid">Money</span>Send
-              </span>
-            </a>
             <div className="site-header-crest" aria-hidden="true">
               <div className="site-header-crest__ring">
                 <img
                   className="site-header-crest__img"
                   src="/buffalo-hero.png"
                   alt=""
-                  width={96}
-                  height={96}
+                  width={320}
+                  height={320}
                   loading="eager"
                   decoding="async"
                 />
               </div>
             </div>
-            <div className="header-meta">
-              {api && (
-                <span
-                  className={`pill-ghost ${
-                    api === "ok" ? "pill-ghost--ok" : api === "offline" ? "pill-ghost--bad" : ""
-                  }`}
-                >
-                  {api === "ok" ? "API online" : api === "offline" ? "Start backend" : "Stripe not set"}
+            <div className="site-header-bar">
+              <a href="/" className="logo" aria-label="BuffaloMoneySend home">
+                <span className="logo-mark" aria-hidden>
+                  B
                 </span>
-              )}
-              <a
-                className="nav-links"
-                href="https://docs.stripe.com/testing"
-                target="_blank"
-                rel="noreferrer"
-                style={{ fontSize: "0.85rem" }}
-              >
-                Test cards
+                <span className="logo-wordmark" translate="no">
+                  Buffalo<span className="logo-wordmark-mid">Money</span>Send
+                </span>
               </a>
+              <div className="header-meta">
+                {api && (
+                  <span
+                    className={`pill-ghost ${
+                      api === "ok" ? "pill-ghost--ok" : api === "offline" ? "pill-ghost--bad" : ""
+                    }`}
+                  >
+                    {api === "ok" ? "API online" : api === "offline" ? "Start backend" : "Stripe not set"}
+                  </span>
+                )}
+                <a
+                  className="nav-links"
+                  href="https://docs.stripe.com/testing"
+                  target="_blank"
+                  rel="noreferrer"
+                  style={{ fontSize: "0.85rem" }}
+                >
+                  Test cards
+                </a>
+              </div>
             </div>
           </header>
 
