@@ -3,6 +3,9 @@ import { TransferApp } from "./transfer/TransferApp";
 export default function App() {
   return (
     <div className="app-thailand-hub">
+      <div className="gearm-watermark" aria-hidden="true">
+        <img className="gearm-watermark__img" src="/gearm-signature.png" alt="" width={240} height={80} />
+      </div>
       <div className="ambient-orb ambient-orb--1" aria-hidden />
       <div className="ambient-orb ambient-orb--2" aria-hidden />
       <div className="app-inner app-inner--thailand-hub">
@@ -21,17 +24,6 @@ export default function App() {
               </span>
             </a>
             <p className="site-header-strap">Send in THB from many countries</p>
-            <div className="gearm-signature" aria-label="Signature: Gearm">
-              <img
-                className="gearm-signature__img"
-                src="/gearm-signature.png"
-                alt="Gearm"
-                width={240}
-                height={80}
-                loading="eager"
-                decoding="async"
-              />
-            </div>
           </header>
 
           <main className="app-main app-main--thailand-hub" id="main">
