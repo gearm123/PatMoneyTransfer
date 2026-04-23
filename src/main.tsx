@@ -1,8 +1,11 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { resolvedApiBase } from "./api/client";
+import { initGoogleAnalytics } from "./analytics";
 import App from "./App";
 import "./index.css";
+
+initGoogleAnalytics();
 
 /* One-line check: DevTools → Console. resolvedApiBase is set in client.ts (env or production default). */
 if (import.meta.env.PROD) {
