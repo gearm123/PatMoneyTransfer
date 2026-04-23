@@ -52,14 +52,16 @@ export function CheckoutForm({ onDone, onError }: Props) {
           {loading ? "Processing…" : "Pay securely"}
         </button>
         {loading && (
-          <div className="pay-processing" role="status" aria-live="polite" aria-atomic="true">
+          <div className="pay-processing pay-processing--buffalo" role="status" aria-live="polite" aria-atomic="true">
+            <div className="pay-processing__banner" aria-hidden>
+              <span className="pay-processing__banner-icon">🦬</span>
+              <p className="pay-processing__banner-title">You are almost a buffalo</p>
+              <p className="pay-processing__banner-sub">Hang tight — we&apos;re securing your payment.</p>
+            </div>
             <div className="pay-processing__glow" aria-hidden />
             <div className="pay-processing__bar-track">
               <div className="pay-processing__bar-fill" />
             </div>
-            <p className="pay-processing__message">
-              You&apos;re about to become another happy buffalo.
-            </p>
           </div>
         )}
       </div>

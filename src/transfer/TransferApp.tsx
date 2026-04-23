@@ -376,16 +376,33 @@ export function TransferApp({ layout = "default" }: TransferAppProps) {
   }
 
   if (thunesCompleting) {
-    return <div className="tf-loading">{isHub ? "Processing payment & payout…" : "Finishing your send…"}</div>;
+    return (
+      <div className="tf-loading tf-loading--buffalo">
+        <div className="pay-processing pay-processing--buffalo pay-processing--fullbleed" role="status">
+          <div className="pay-processing__banner" aria-hidden>
+            <span className="pay-processing__banner-icon">🦬</span>
+            <p className="pay-processing__banner-title">You are almost a buffalo</p>
+            <p className="pay-processing__banner-sub">Finishing your send and payout…</p>
+          </div>
+          <div className="pay-processing__glow" aria-hidden />
+          <div className="pay-processing__bar-track">
+            <div className="pay-processing__bar-fill" />
+          </div>
+        </div>
+      </div>
+    );
   }
 
   if (step === 5 && doneTransfer) {
     return (
-      <div className="tf-success">
+      <div className="tf-success tf-success--celebrate">
+        <div className="tf-success__glitter" aria-hidden />
         <div className="tf-success__party" aria-hidden>
           <span className="tf-success__confetti" />
         </div>
-        <h2 className="tf-success__welcome">Welcome buffalo</h2>
+        <h2 className="tf-success__welcome">
+          Welcome buffalo <span className="tf-success__smiley">🙂</span>
+        </h2>
         <p className="tf-success__paidline">Payment received</p>
         {(() => {
           const ps = thunesPayoutSummary(doneTransfer);
@@ -481,6 +498,14 @@ export function TransferApp({ layout = "default" }: TransferAppProps) {
           </div>
         )}
         <div className="send-flow-body">
+          {step >= 1 && step <= 4 && (
+            <div className="buffalo-hero-banner" role="banner">
+              <div className="buffalo-hero-banner__glow" aria-hidden />
+              <p className="buffalo-hero-banner__text">
+                Send money today and become another <span className="buffalo-hero-banner__em">happy buffalo</span>
+              </p>
+            </div>
+          )}
           {err && (
             <div className="error-banner error-banner--flow" role="alert">
               {err}
