@@ -10,7 +10,7 @@ export default function App() {
           <div className="buffalo-atmosphere__mark buffalo-atmosphere__mark--1" />
           <div className="buffalo-atmosphere__mark buffalo-atmosphere__mark--2" />
         </div>
-        <div className="app-shell app-shell--viewport">
+        <div className="app-shell app-shell--viewport app-shell--stack">
           <header className="site-header">
             <a href="/" className="site-header-brand" aria-label="BuffaloMoneySend home">
               <span className="logo-mark" aria-hidden>
@@ -36,7 +36,7 @@ export default function App() {
           </header>
 
           <main className="app-main">
-            <div className="hero-landing" aria-labelledby="hero-title">
+            <div className="hero-landing hero-landing--stack" aria-labelledby="hero-title">
               <div className="hero-copy">
                 <p className="hero-eyebrow">Cross-border · built to stay calm</p>
                 <h1 id="hero-title" className="hero-title">

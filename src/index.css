@@ -152,19 +152,6 @@ textarea {
     overflow: hidden;
   }
 
-  .hero-copy {
-    scrollbar-width: thin;
-    scrollbar-color: rgba(99, 102, 241, 0.35) transparent;
-  }
-
-  .hero-copy::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  .hero-copy::-webkit-scrollbar-thumb {
-    background: rgba(99, 102, 241, 0.28);
-    border-radius: 99px;
-  }
 }
 
 .ambient-orb {
@@ -402,37 +389,122 @@ textarea {
 }
 
 @media (min-width: 900px) {
-  .hero-landing {
+  /* Stacked: marketing band above, payment card below — no page scroll */
+  .app-shell--stack {
+    padding: 0.4rem 1.35rem 0.4rem;
+  }
+
+  .app-shell--stack .site-header {
+    padding: 0.15rem 0 0.4rem;
+    margin-bottom: 0.15rem;
+    gap: 0.3rem;
+    border-bottom: none;
+  }
+
+  .app-shell--stack .site-header-crest__ring {
+    width: clamp(3.4rem, 10vh, 5rem);
+    height: clamp(3.4rem, 10vh, 5rem);
+    max-width: min(5rem, 24vw);
+    max-height: min(5rem, 24vw);
+  }
+
+  .app-shell--stack .site-header-title__wordmark {
+    font-size: clamp(1.05rem, 2.6vw, 1.4rem);
+  }
+
+  .app-shell--stack .site-header-brand .logo-mark {
+    width: 32px;
+    height: 32px;
+    font-size: 0.88rem;
+  }
+
+  .hero-landing--stack {
     flex: 1 1 auto;
     min-height: 0;
-    display: grid;
-    grid-template-columns: 1.05fr 0.95fr;
+    display: flex;
+    flex-direction: column;
     align-items: stretch;
-    gap: 1.15rem 1.75rem;
-    padding: 0.4rem 0 0.35rem;
+    gap: 0.4rem;
+    padding: 0.15rem 0 0.1rem;
     overflow: hidden;
   }
 
-  .hero-landing > * {
+  .hero-landing--stack > * {
     min-height: 0;
   }
 
-  .hero-copy {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    gap: clamp(0.5rem, 1.2vh, 1rem);
+  .hero-landing--stack .hero-copy {
+    flex: 0 0 auto;
     min-height: 0;
-    overflow-y: auto;
-    padding: 0.15rem 0.4rem 0.35rem 0;
-    max-width: 40ch;
-    overscroll-behavior: contain;
-    scrollbar-gutter: stable;
+    overflow: hidden;
+    max-width: none;
+    padding: 0.25rem 0.2rem 0.45rem;
+    margin: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+    grid-template-rows: auto auto auto auto;
+    column-gap: min(1.5rem, 3vw);
+    row-gap: 0.2rem;
+    align-items: start;
+    border-bottom: 1px solid rgba(99, 102, 241, 0.1);
+    background: linear-gradient(180deg, rgba(99, 102, 241, 0.03) 0%, transparent 100%);
+    border-radius: 0 0 16px 16px;
+  }
+
+  .hero-landing--stack .hero-eyebrow {
+    grid-column: 1;
+    grid-row: 1;
+    font-size: 0.6rem;
+    margin-bottom: 0;
+    letter-spacing: 0.1em;
+  }
+
+  .hero-landing--stack .hero-title {
+    grid-column: 1;
+    grid-row: 2;
+    font-size: clamp(1.1rem, 2.1vh, 1.5rem);
+    line-height: 1.2;
+    margin: 0;
+    max-width: 20ch;
+  }
+
+  .hero-landing--stack .hero-tagline {
+    grid-column: 1;
+    grid-row: 3;
+    font-size: 0.68rem;
+    line-height: 1.35;
+    margin: 0;
+    padding: 0.2rem 0.45rem;
+  }
+
+  .hero-landing--stack .hero-sub {
+    grid-column: 2;
+    grid-row: 1 / 5;
+    font-size: 0.75rem;
+    line-height: 1.4;
+    margin: 0;
+    max-width: none;
+  }
+
+  .hero-landing--stack .trust-pills {
+    grid-column: 1;
+    grid-row: 4;
+    margin: 0.1rem 0 0;
+    padding: 0;
+    gap: 0.3rem 0.4rem;
+    flex-wrap: wrap;
+  }
+
+  .hero-landing--stack .trust-pill {
+    font-size: 0.65rem;
+    padding: 0.22rem 0.5rem;
+    font-weight: 600;
   }
 
   .hero-panel {
     position: relative;
     isolation: isolate;
+    flex: 1 1 0;
     min-height: 0;
     display: flex;
     flex-direction: column;
@@ -442,7 +514,7 @@ textarea {
   .hero-panel::before {
     content: "";
     position: absolute;
-    inset: -0.4rem;
+    inset: -0.35rem;
     border-radius: calc(var(--radius-lg) + 6px);
     background: linear-gradient(160deg, rgba(255, 255, 255, 0.4), rgba(99, 102, 241, 0.05));
     z-index: 0;
@@ -481,16 +553,38 @@ textarea {
   }
 
   .site-footer {
-    margin-top: 0.4rem;
-    padding-top: 0.5rem;
-    font-size: 0.72rem;
-    line-height: 1.45;
+    margin-top: 0.25rem;
+    padding-top: 0.35rem;
+    font-size: 0.68rem;
+    line-height: 1.4;
   }
 
   .footer-motto {
     display: inline;
     margin-top: 0;
-    margin-left: 0.25rem;
+    margin-left: 0.2rem;
+  }
+}
+
+/* Stack layout: on narrow desktop width, single-column copy (still above card) */
+@media (min-width: 900px) and (max-width: 1024px) {
+  .hero-landing--stack .hero-copy {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+    row-gap: 0.35rem;
+  }
+
+  .hero-landing--stack .hero-eyebrow,
+  .hero-landing--stack .hero-title,
+  .hero-landing--stack .hero-tagline,
+  .hero-landing--stack .hero-sub,
+  .hero-landing--stack .trust-pills {
+    grid-column: 1;
+    grid-row: auto;
+  }
+
+  .hero-landing--stack .hero-title {
+    max-width: 36ch;
   }
 }
 
