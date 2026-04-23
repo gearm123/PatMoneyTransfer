@@ -2,6 +2,7 @@ import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe, type StripeElementsOptions } from "@stripe/stripe-js";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { createTransfer, getQuote, getTransferConfig, type Transfer } from "./api";
+import { readTransferConfigCache, writeTransferConfigCache } from "./configCache";
 import { CheckoutForm } from "./CheckoutForm";
 
 const FROM = [
@@ -19,6 +20,21 @@ const DESTINATIONS = [{ code: "THA", label: "Thailand", sub: "THB" }] as const;
 const STEP_LABELS = ["Amount", "Recipient", "Your details", "Pay"] as const;
 
 const defaultPk = (import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY as string | undefined) || "";
+
+function initialConfigState(): { ok: boolean | null; banks: { code: string; name: string }[] } {
+  const cached = readTransferConfigCache();
+  if (cached) {
+    return {
+      ok: cached.stripe,
+      banks: cached.thaiBanks?.length ? cached.thaiBanks : [],
+    };
+  }
+  // Publishable key present ⇒ assume checkout is available while API cold-starts (Render, etc.)
+  if (defaultPk) {
+    return { ok: true, banks: [] };
+  }
+  return { ok: null, banks: [] };
+}
 
 type Step = 1 | 2 | 3 | 4 | 5;
 
@@ -61,8 +77,8 @@ type TransferAppProps = {
 
 export function TransferApp({ layout = "default" }: TransferAppProps) {
   const isHub = layout === "hub";
-  const [configOk, setConfigOk] = useState<boolean | null>(null);
-  const [bankList, setBankList] = useState<{ code: string; name: string }[]>([]);
+  const [configOk, setConfigOk] = useState<boolean | null>(() => initialConfigState().ok);
+  const [bankList, setBankList] = useState<{ code: string; name: string }[]>(() => initialConfigState().banks);
   const [step, setStep] = useState<Step>(1);
   const [fromCountry, setFromCountry] = useState("USA");
   const [toCountry, setToCountry] = useState("THA");
@@ -96,12 +112,32 @@ export function TransferApp({ layout = "default" }: TransferAppProps) {
   }, [activePk]);
 
   useEffect(() => {
-    getTransferConfig()
-      .then((c) => {
-        setConfigOk(c.stripe);
-        if (c.thaiBanks?.length) setBankList(c.thaiBanks);
-      })
-      .catch(() => setConfigOk(false));
+    let cancelled = false;
+    const run = async () => {
+      const maxTries = 4;
+      for (let t = 0; t < maxTries; t++) {
+        if (t > 0) {
+          await new Promise((r) => setTimeout(r, 500 * t));
+        }
+        if (cancelled) return;
+        try {
+          const c = await getTransferConfig();
+          if (cancelled) return;
+          setConfigOk(c.stripe);
+          if (c.thaiBanks?.length) setBankList(c.thaiBanks);
+          writeTransferConfigCache(c);
+          return;
+        } catch {
+          /* retry — helps with cold start (e.g. Render) */
+        }
+      }
+      if (cancelled) return;
+      setConfigOk((prev) => (defaultPk ? prev : false));
+    };
+    void run();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const refreshQuote = useCallback(() => {
