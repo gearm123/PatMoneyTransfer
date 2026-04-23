@@ -43,10 +43,12 @@ export function CheckoutForm({ onDone, onError }: Props) {
   };
 
   return (
-    <form onSubmit={(e) => void handle(e)} className="pay-form" aria-busy={loading} data-processing={loading ? "true" : undefined}>
+    <form onSubmit={(e) => void handle(e)} className="pay-form pay-form--embedded" aria-busy={loading} data-processing={loading ? "true" : undefined}>
       <div className="pay-form-shell">
-        <PaymentElement />
-        <button type="submit" className="btn btn-primary" disabled={!stripe || loading} style={{ marginTop: "1.25rem", width: "100%" }}>
+        <div className="pay-element-surface">
+          <PaymentElement options={{ layout: "tabs" }} />
+        </div>
+        <button type="submit" className="btn btn-primary pay-form__submit" disabled={!stripe || loading}>
           {loading ? "Processing…" : "Pay securely"}
         </button>
         {loading && (

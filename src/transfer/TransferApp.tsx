@@ -24,14 +24,19 @@ type Step = 1 | 2 | 3 | 4 | 5;
 
 function StepTracker({ current }: { current: 1 | 2 | 3 | 4 }) {
   return (
-    <div className="step-tracker" aria-hidden>
+    <div className="step-tracker step-tracker--compact" aria-hidden>
       {STEP_LABELS.map((label, i) => {
         const n = (i + 1) as 1 | 2 | 3 | 4;
         const isActive = n === current;
         const isDone = n < current;
         return (
-          <div key={label} className={`step-pill ${isActive ? "is-active" : ""} ${isDone ? "is-done" : ""}`}>
-            {isDone ? "✓" : i + 1} {label}
+          <div
+            key={label}
+            className={`step-pill step-pill--compact ${isActive ? "is-active" : ""} ${isDone ? "is-done" : ""}`}
+            title={label}
+          >
+            {isDone ? "✓" : i + 1}
+            <span className="step-pill__label">{label}</span>
           </div>
         );
       })}
@@ -238,7 +243,7 @@ export function TransferApp() {
 
   return (
     <div className="card-panel card-panel--send">
-      <div className="send-flow">
+      <div className="send-flow send-flow--no-scroll">
         <div className="send-flow-top">
           <p className="send-flow-eyebrow" translate="no">
             BuffaloMoneySend
@@ -247,201 +252,217 @@ export function TransferApp() {
           <p className="send-flow-motto">The community grows one send at a time. Yours is next.</p>
           {step >= 1 && step <= 4 && <StepTracker current={step as 1 | 2 | 3 | 4} />}
         </div>
-        {err && (
-          <div className="error-banner" role="alert">
-            {err}
-          </div>
-        )}
+        <div className="send-flow-body">
+          {err && (
+            <div className="error-banner error-banner--flow" role="alert">
+              {err}
+            </div>
+          )}
 
-        {step === 1 && (
-          <div className="flow-step">
-            <h3>How much and where</h3>
-            <div className="field">
-              <label htmlFor="fc">You send from</label>
-              <select id="fc" value={fromCountry} onChange={(e) => setFromCountry(e.target.value)}>
-                {FROM.map((c) => (
-                  <option key={c.code} value={c.code}>
-                    {c.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="field">
-              <label htmlFor="dest">They receive in</label>
-              <select id="dest" value={toCountry} onChange={(e) => setToCountry(e.target.value)}>
-                {DESTINATIONS.map((d) => (
-                  <option key={d.code} value={d.code}>
-                    {d.label} ({d.sub})
-                  </option>
-                ))}
-              </select>
-            </div>
-            <p className="disclaimer" style={{ margin: "0 0 0.5rem" }}>
-              New corridors can migrate in as you expand the product.
-            </p>
-            <div className="field-row">
-              <div className="field">
-                <label htmlFor="am">Amount</label>
-                <input
-                  id="am"
-                  inputMode="decimal"
-                  value={amountStr}
-                  onChange={(e) => setAmountStr(e.target.value)}
-                />
+          {step === 1 && (
+            <div className="flow-step" key="step-1">
+              <div className="flow-step-lead">
+                <h3 className="flow-step-title">How much and where</h3>
+                <p className="flow-step-desc">Choose your route, then the amount. You’ll see an estimate in the recipient’s currency before you go on.</p>
+                <p className="flow-step-note">New corridors can join as you grow the product.</p>
               </div>
-              <div className="field">
-                <label htmlFor="ccy">Your currency</label>
-                <select id="ccy" value={fromCurrency} onChange={(e) => setFromCurrency(e.target.value)}>
-                  {CCY.map((c) => (
-                    <option key={c} value={c}>
-                      {c}
-                    </option>
-                  ))}
-                </select>
+              <div className="flow-step-main">
+                <div className="field field--tight">
+                  <label htmlFor="fc">You send from</label>
+                  <select id="fc" value={fromCountry} onChange={(e) => setFromCountry(e.target.value)}>
+                    {FROM.map((c) => (
+                      <option key={c.code} value={c.code}>
+                        {c.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="field field--tight">
+                  <label htmlFor="dest">They receive in</label>
+                  <select id="dest" value={toCountry} onChange={(e) => setToCountry(e.target.value)}>
+                    {DESTINATIONS.map((d) => (
+                      <option key={d.code} value={d.code}>
+                        {d.label} ({d.sub})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="field-row field-row--tight">
+                  <div className="field field--tight">
+                    <label htmlFor="am">Amount</label>
+                    <input
+                      id="am"
+                      inputMode="decimal"
+                      value={amountStr}
+                      onChange={(e) => setAmountStr(e.target.value)}
+                    />
+                  </div>
+                  <div className="field field--tight">
+                    <label htmlFor="ccy">Your currency</label>
+                    <select id="ccy" value={fromCurrency} onChange={(e) => setFromCurrency(e.target.value)}>
+                      {CCY.map((c) => (
+                        <option key={c} value={c}>
+                          {c}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+                <div className="rate-strip rate-strip--tight">
+                  {localEst != null ? (
+                    <span>
+                      ≈ <strong className="mono">{localEst.toFixed(2)} {localCcy}</strong> to your recipient
+                      <span className="rate-strip__foot">
+                        Indicative rate for {destLabel}. Final amount is set at payout.
+                      </span>
+                    </span>
+                  ) : (
+                    <span className="rate-strip__empty">Enter an amount to see an estimate in local currency.</span>
+                  )}
+                </div>
+              </div>
+              <div className="flow-actions flow-step-actions">
+                <button type="button" className="btn btn-primary" onClick={() => can1() && setStep(2)} disabled={!can1()}>
+                  Continue
+                </button>
               </div>
             </div>
-            <div className="rate-strip">
-              {localEst != null ? (
-                <span>
-                  ≈ <strong className="mono">{localEst.toFixed(2)} {localCcy}</strong> to your recipient
-                  <br />
-                  <span className="disclaimer" style={{ margin: "0.35rem 0 0", display: "inline-block" }}>
-                    Indicative rate for {destLabel}; final settlement set by your payout provider.
-                  </span>
-                </span>
-              ) : (
-                <span style={{ color: "var(--muted)" }}>Enter an amount to see an estimate in local currency.</span>
-              )}
-            </div>
-            <button type="button" className="btn btn-primary" onClick={() => can1() && setStep(2)} disabled={!can1()}>
-              Continue
-            </button>
-          </div>
-        )}
+          )}
 
-        {step === 2 && (
-          <div className="flow-step">
-            <h3>Recipient &amp; account</h3>
-            <p className="disclaimer" style={{ margin: "0 0 0.9rem" }}>
-              Account details for {destLabel}. Enter exactly as on the bank record.
-            </p>
-            <div className="field">
-              <label htmlFor="rn">Account holder</label>
-              <input id="rn" value={recipientName} onChange={(e) => setRecipientName(e.target.value)} />
-            </div>
-            <div className="field">
-              <label htmlFor="bk">Bank</label>
-              <select id="bk" value={localBank} onChange={(e) => setLocalBank(e.target.value)}>
-                {(bankList.length
-                  ? bankList
-                  : [
-                      { code: "BBL", name: "Bangkok Bank" },
-                      { code: "KBANK", name: "Kasikorn Bank" },
-                    ]
-                ).map((b) => (
-                  <option key={b.code} value={b.code}>
-                    {b.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="field">
-              <label htmlFor="acc">Account number</label>
-              <input
-                id="acc"
-                inputMode="numeric"
-                value={localAccount}
-                onChange={(e) => setLocalAccount(e.target.value)}
-                autoComplete="off"
-                placeholder="e.g. 1234567890 (6–20 digits; hyphens and spaces are OK)"
-              />
-            </div>
-            {!can2() && (
-              <p className="form-hint form-hint--step2" role="status">
-                {recipientName.trim().length < 2 && <span>Enter the account holder’s full name (at least 2 letters). </span>}
-                {recipientName.trim().length >= 2 && accountDigits.length < 6 && (
-                  <span>
-                    Account number: need at least <strong>6</strong> digits; only{" "}
-                    <strong className="mono">{accountDigits.length}</strong> counted
-                    {accountDigits.length > 0 ? " (dashes, spaces, and letters are ignored)." : " — type the digits, or a longer fake number like 1234567890."}
-                  </span>
+          {step === 2 && (
+            <div className="flow-step" key="step-2">
+              <div className="flow-step-lead">
+                <h3 className="flow-step-title">Recipient &amp; account</h3>
+                <p className="flow-step-desc">
+                  <strong className="flow-step-desc-strong">{destLabel}</strong> account details only—type them exactly as on the bank book or app.
+                </p>
+              </div>
+              <div className="flow-step-main">
+                <div className="field field--tight">
+                  <label htmlFor="rn">Account holder</label>
+                  <input id="rn" value={recipientName} onChange={(e) => setRecipientName(e.target.value)} />
+                </div>
+                <div className="field field--tight">
+                  <label htmlFor="bk">Bank</label>
+                  <select id="bk" value={localBank} onChange={(e) => setLocalBank(e.target.value)}>
+                    {(bankList.length
+                      ? bankList
+                      : [
+                          { code: "BBL", name: "Bangkok Bank" },
+                          { code: "KBANK", name: "Kasikorn Bank" },
+                        ]
+                    ).map((b) => (
+                      <option key={b.code} value={b.code}>
+                        {b.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="field field--tight">
+                  <label htmlFor="acc">Account number</label>
+                  <input
+                    id="acc"
+                    inputMode="numeric"
+                    value={localAccount}
+                    onChange={(e) => setLocalAccount(e.target.value)}
+                    autoComplete="off"
+                    placeholder="6–20 digits (hyphens and spaces are OK)"
+                  />
+                </div>
+                {!can2() && (
+                  <p className="form-hint form-hint--step2 form-hint--compact" role="status">
+                    {recipientName.trim().length < 2 && <span>Account holder: full name, at least 2 letters. </span>}
+                    {recipientName.trim().length >= 2 && accountDigits.length < 6 && (
+                      <span>
+                        Digits: need <strong>6</strong>+ — <strong className="mono">{accountDigits.length}</strong> so far
+                        {accountDigits.length > 0 ? " (non-digits ignored)." : ". Try 1234567890 for tests."}
+                      </span>
+                    )}
+                    {recipientName.trim().length >= 2 && accountDigits.length > 20 && <span>At most 20 digits.</span>}
+                  </p>
                 )}
-                {recipientName.trim().length >= 2 && accountDigits.length > 20 && (
-                  <span>Use at most 20 digits in the account number.</span>
-                )}
-              </p>
-            )}
-            <p className="disclaimer">Incorrect account details can delay or fail transfers; always double-check.</p>
-            <div className="flow-actions">
-              <button type="button" className="btn btn-ghost" onClick={() => setStep(1)}>
-                Back
-              </button>
-              <button type="button" className="btn btn-primary" onClick={() => can2() && setStep(3)} disabled={!can2()}>
-                Continue
-              </button>
+                <p className="flow-step-foot">Wrong details can delay or fail the transfer—double-check before you continue.</p>
+              </div>
+              <div className="flow-actions flow-step-actions">
+                <button type="button" className="btn btn-ghost" onClick={() => setStep(1)}>
+                  Back
+                </button>
+                <button type="button" className="btn btn-primary" onClick={() => can2() && setStep(3)} disabled={!can2()}>
+                  Continue
+                </button>
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {step === 3 && (
-          <div className="flow-step">
-            <h3>Your details</h3>
-            <p className="disclaimer" style={{ margin: "0 0 0.9rem" }}>
-              For your receipt and account notices.
-            </p>
-            <div className="field">
-              <label htmlFor="sn">Full name</label>
-              <input id="sn" value={senderName} onChange={(e) => setSenderName(e.target.value)} autoComplete="name" />
+          {step === 3 && (
+            <div className="flow-step" key="step-3">
+              <div className="flow-step-lead">
+                <h3 className="flow-step-title">Your details</h3>
+                <p className="flow-step-desc">We use this for your receipt and any important send updates—nothing spammy.</p>
+              </div>
+              <div className="flow-step-main">
+                <div className="field field--tight">
+                  <label htmlFor="sn">Full name</label>
+                  <input id="sn" value={senderName} onChange={(e) => setSenderName(e.target.value)} autoComplete="name" />
+                </div>
+                <div className="field field--tight">
+                  <label htmlFor="se">Email</label>
+                  <input
+                    id="se"
+                    type="email"
+                    value={senderEmail}
+                    onChange={(e) => setSenderEmail(e.target.value)}
+                    autoComplete="email"
+                  />
+                </div>
+              </div>
+              <div className="flow-actions flow-step-actions">
+                <button type="button" className="btn btn-ghost" onClick={() => setStep(2)}>
+                  Back
+                </button>
+                <button type="button" className="btn btn-primary" onClick={() => void goPreparePayment()} disabled={!can3()}>
+                  Continue to pay
+                </button>
+              </div>
             </div>
-            <div className="field">
-              <label htmlFor="se">Email</label>
-              <input
-                id="se"
-                type="email"
-                value={senderEmail}
-                onChange={(e) => setSenderEmail(e.target.value)}
-                autoComplete="email"
-              />
-            </div>
-            <div className="flow-actions">
-              <button type="button" className="btn btn-ghost" onClick={() => setStep(2)}>
-                Back
-              </button>
-              <button type="button" className="btn btn-primary" onClick={() => void goPreparePayment()} disabled={!can3()}>
-                Continue to pay
-              </button>
-            </div>
-          </div>
-        )}
+          )}
 
-        {step === 4 && clientSecret && options && stripePromise && (
-          <div className="flow-step">
-            <h3>Secure card payment</h3>
-            <p className="disclaimer" style={{ margin: "0 0 0.75rem" }}>
-              Almost across the range—use test card <span className="mono">4242 4242 4242 4242</span>, any
-              future date, any CVC.
-            </p>
-            <Elements key={clientSecret} stripe={stripePromise} options={options}>
-              <CheckoutForm onError={(m) => setErr(m)} onDone={onPaid} />
-            </Elements>
-            <div className="flow-actions" style={{ marginTop: "0.5rem" }}>
-              <button
-                type="button"
-                className="btn btn-ghost"
-                onClick={() => {
-                  setStep(3);
-                  setClientSecret(null);
-                }}
-              >
-                Back
-              </button>
+          {step === 4 && clientSecret && options && stripePromise && (
+            <div className="flow-step flow-step--pay" key="step-4">
+              <div className="flow-step-lead flow-step-lead--pay">
+                <span className="flow-step-kicker">Secure checkout</span>
+                <h3 className="flow-step-title">Pay with your card</h3>
+                <p className="flow-step-desc">
+                  Your details are processed by Stripe. For testing, use card <span className="mono pay-hilite">4242 4242 4242 4242</span>, a future
+                  date, and any CVC.
+                </p>
+              </div>
+              <div className="flow-step-main flow-step-main--pay">
+                <div className="flow-pay-stripe">
+                  <Elements key={clientSecret} stripe={stripePromise} options={options}>
+                    <CheckoutForm onError={(m) => setErr(m)} onDone={onPaid} />
+                  </Elements>
+                </div>
+              </div>
+              <div className="flow-actions flow-step-actions">
+                <button
+                  type="button"
+                  className="btn btn-ghost"
+                  onClick={() => {
+                    setStep(3);
+                    setClientSecret(null);
+                  }}
+                >
+                  Back
+                </button>
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {step === 4 && clientSecret && !stripePromise && (
-          <p className="error-banner">Set <span className="mono">VITE_STRIPE_PUBLISHABLE_KEY</span> in your <span className="mono">.env</span> file.</p>
-        )}
+          {step === 4 && clientSecret && !stripePromise && (
+            <p className="error-banner error-banner--flow">Set <span className="mono">VITE_STRIPE_PUBLISHABLE_KEY</span> in your <span className="mono">.env</span> file.</p>
+          )}
+        </div>
       </div>
     </div>
   );

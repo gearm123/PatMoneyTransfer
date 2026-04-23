@@ -152,19 +152,16 @@ textarea {
     overflow: hidden;
   }
 
-  .hero-copy,
-  .hero-panel .card-panel--send .send-flow {
+  .hero-copy {
     scrollbar-width: thin;
     scrollbar-color: rgba(99, 102, 241, 0.35) transparent;
   }
 
-  .hero-copy::-webkit-scrollbar,
-  .hero-panel .card-panel--send .send-flow::-webkit-scrollbar {
+  .hero-copy::-webkit-scrollbar {
     width: 6px;
   }
 
-  .hero-copy::-webkit-scrollbar-thumb,
-  .hero-panel .card-panel--send .send-flow::-webkit-scrollbar-thumb {
+  .hero-copy::-webkit-scrollbar-thumb {
     background: rgba(99, 102, 241, 0.28);
     border-radius: 99px;
   }
@@ -467,9 +464,16 @@ textarea {
   .hero-panel .card-panel--send .send-flow {
     flex: 1 1 auto;
     min-height: 0;
-    overflow-y: auto;
-    overscroll-behavior: contain;
-    scrollbar-gutter: stable;
+    overflow: hidden;
+  }
+
+  .hero-panel .card-panel--send .send-flow-body {
+    min-height: 0;
+  }
+
+  .hero-panel .card-panel--send .flow-step-main--pay {
+    overflow: hidden;
+    min-height: 0;
   }
 
   .hero-panel .card-panel:not(.card-panel--send) {
@@ -674,13 +678,37 @@ textarea {
   border-color: rgba(12, 16, 32, 0.14);
 }
 
-/* Flow (transfer) */
+/* Flow (transfer) — no outer scroll on desktop; step copy above fields */
 .send-flow {
-  padding: 1.75rem 1.75rem 1.5rem;
+  padding: 1.25rem 1.35rem 1rem;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  flex: 1 1 auto;
+}
+
+.send-flow--no-scroll {
+  min-height: 0;
 }
 
 .send-flow-top {
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.75rem;
+  flex: 0 0 auto;
+}
+
+.send-flow-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.error-banner--flow {
+  margin-bottom: 0.65rem;
+  flex: 0 0 auto;
+  font-size: 0.82rem;
+  padding: 0.6rem 0.75rem;
 }
 
 .send-flow-eyebrow {
@@ -718,6 +746,18 @@ textarea {
   flex-wrap: wrap;
 }
 
+.step-tracker--compact {
+  margin: 0.65rem 0 0;
+  gap: 0.25rem;
+  flex-wrap: nowrap;
+}
+
+@media (min-width: 500px) {
+  .step-tracker--compact {
+    gap: 0.4rem;
+  }
+}
+
 .step-pill {
   flex: 1;
   min-width: 0;
@@ -729,12 +769,33 @@ textarea {
   color: var(--muted);
   background: rgba(12, 16, 32, 0.04);
   border: 1px solid transparent;
-  transition: color 0.2s, background 0.2s, border-color 0.2s;
+  transition: color 0.2s, background 0.2s, border-color 0.2s, transform 0.25s ease, box-shadow 0.25s ease;
+}
+.step-pill--compact {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.1rem;
+  padding: 0.35rem 0.2rem 0.4rem;
+  border-radius: 10px;
+  line-height: 1.1;
+  font-size: 0.68rem;
+}
+.step-pill__label {
+  display: block;
+  font-size: 0.58rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  opacity: 0.85;
 }
 .step-pill.is-active {
   color: #fff;
   background: linear-gradient(140deg, var(--accent), #4f46e5);
   border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 14px -4px rgba(79, 70, 229, 0.55);
+  transform: translateY(-1px);
 }
 .step-pill.is-done {
   color: #0d9488;
@@ -742,11 +803,212 @@ textarea {
   border-color: rgba(45, 212, 191, 0.35);
 }
 
-.flow-step h3 {
+/* Step panel: copy on top, fields below, actions pinned */
+.flow-step {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: flow-step-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes flow-step-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flow-step {
+    animation: none;
+  }
+}
+
+.flow-step-lead {
+  flex: 0 0 auto;
+  margin-bottom: 0.65rem;
+}
+
+.flow-step--pay .flow-step-lead {
+  margin-bottom: 0.75rem;
+}
+
+.flow-step-kicker {
+  display: block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #6366f1;
+  margin-bottom: 0.3rem;
+}
+
+.flow-step-title {
   font-size: 1.05rem;
-  font-weight: 600;
-  margin-bottom: 1.1rem;
+  font-weight: 700;
+  margin: 0 0 0.45rem;
   color: var(--ink);
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+}
+
+.flow-step-desc {
+  margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--ink-soft);
+  max-width: 40ch;
+}
+
+.flow-step-desc-strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.flow-step-note {
+  margin: 0.45rem 0 0;
+  font-size: 0.72rem;
+  line-height: 1.4;
+  color: var(--muted);
+  font-style: italic;
+}
+
+.flow-step-lead--pay {
+  padding: 0.75rem 0.9rem 0.85rem;
+  border-radius: 14px;
+  background: linear-gradient(145deg, rgba(99, 102, 241, 0.09) 0%, rgba(15, 23, 42, 0.05) 50%, rgba(180, 83, 9, 0.07) 100%);
+  border: 1px solid rgba(99, 102, 241, 0.14);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.65) inset;
+}
+
+.flow-step-lead--pay .flow-step-title {
+  margin-bottom: 0.4rem;
+}
+
+.pay-hilite {
+  display: inline-block;
+  padding: 0.08em 0.3em;
+  border-radius: 6px;
+  background: rgba(15, 23, 42, 0.85);
+  color: #e2e8f0;
+  font-weight: 600;
+  font-size: 0.88em;
+}
+
+.flow-step-foot {
+  margin: 0.4rem 0 0;
+  font-size: 0.7rem;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+.flow-step-main {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.flow-step-main--pay {
+  justify-content: flex-start;
+  min-height: 0;
+  flex: 1 1 0;
+}
+
+.flow-pay-stripe {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.flow-step--pay {
+  min-height: 0;
+}
+
+.flow-step-actions {
+  margin-top: auto;
+  padding-top: 0.65rem;
+  flex: 0 0 auto;
+}
+
+.field--tight {
+  margin-bottom: 0.55rem;
+}
+
+.field-row--tight {
+  gap: 0.6rem;
+}
+
+.field--tight > label {
+  margin-bottom: 0.28rem;
+  font-size: 0.72rem;
+}
+
+.field--tight input,
+.field--tight select {
+  padding: 0.58rem 0.75rem;
+}
+
+.form-hint--compact {
+  margin: 0.2rem 0 0.35rem;
+  padding: 0.4rem 0.55rem;
+  font-size: 0.74rem;
+  line-height: 1.4;
+}
+
+.rate-strip--tight {
+  padding: 0.55rem 0.7rem;
+  margin-bottom: 0;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  flex: 0 0 auto;
+}
+
+.rate-strip__foot {
+  display: block;
+  margin-top: 0.3rem;
+  font-size: 0.7rem;
+  line-height: 1.4;
+  color: var(--muted);
+}
+
+.rate-strip__empty {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+@media (max-width: 899px) {
+  .send-flow--no-scroll,
+  .send-flow-body,
+  .flow-step,
+  .flow-step-main {
+    overflow: visible;
+    min-height: auto;
+  }
+
+  .send-flow {
+    min-height: auto;
+  }
+
+  .hero-panel .card-panel--send .send-flow {
+    overflow: visible;
+  }
+
+  .flow-step-main--pay,
+  .flow-pay-stripe {
+    overflow: visible;
+  }
 }
 
 .field {
@@ -855,6 +1117,68 @@ textarea {
 
 .pay-form-shell {
   position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.pay-form--embedded {
+  margin-top: 0;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.pay-element-surface {
+  flex: 1 1 auto;
+  min-height: 11rem;
+  max-height: min(42vh, 380px);
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scroll-behavior: smooth;
+  border-radius: 14px;
+  border: 1px solid rgba(99, 102, 241, 0.22);
+  background: linear-gradient(180deg, #111827 0%, #0f172a 100%);
+  padding: 0.5rem 0.6rem 0.65rem;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.05) inset, 0 8px 24px -12px rgba(0, 0, 0, 0.4);
+  scrollbar-width: thin;
+  scrollbar-color: rgba(99, 102, 241, 0.45) rgba(15, 23, 42, 0.5);
+}
+
+.pay-element-surface::-webkit-scrollbar {
+  width: 5px;
+}
+.pay-element-surface::-webkit-scrollbar-thumb {
+  background: rgba(99, 102, 241, 0.4);
+  border-radius: 99px;
+}
+
+@media (min-width: 900px) {
+  .pay-element-surface {
+    max-height: min(40vh, 360px);
+  }
+}
+
+@media (max-width: 599px) {
+  .pay-element-surface {
+    max-height: min(52vh, 420px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pay-element-surface {
+    scroll-behavior: auto;
+  }
+}
+
+.pay-form__submit {
+  width: 100%;
+  margin-top: 0.7rem;
+  flex: 0 0 auto;
 }
 
 /* Payment processing overlay — indeterminate bar + herd message */
