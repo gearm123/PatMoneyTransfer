@@ -267,45 +267,47 @@ export function TransferApp() {
                 <p className="flow-step-note">New corridors can join as you grow the product.</p>
               </div>
               <div className="flow-step-main">
-                <div className="field field--tight">
-                  <label htmlFor="fc">You send from</label>
-                  <select id="fc" value={fromCountry} onChange={(e) => setFromCountry(e.target.value)}>
-                    {FROM.map((c) => (
-                      <option key={c.code} value={c.code}>
-                        {c.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="field field--tight">
-                  <label htmlFor="dest">They receive in</label>
-                  <select id="dest" value={toCountry} onChange={(e) => setToCountry(e.target.value)}>
-                    {DESTINATIONS.map((d) => (
-                      <option key={d.code} value={d.code}>
-                        {d.label} ({d.sub})
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="field-row field-row--tight">
+                <div className="flow-fields" aria-label="Send amount and route">
                   <div className="field field--tight">
-                    <label htmlFor="am">Amount</label>
-                    <input
-                      id="am"
-                      inputMode="decimal"
-                      value={amountStr}
-                      onChange={(e) => setAmountStr(e.target.value)}
-                    />
-                  </div>
-                  <div className="field field--tight">
-                    <label htmlFor="ccy">Your currency</label>
-                    <select id="ccy" value={fromCurrency} onChange={(e) => setFromCurrency(e.target.value)}>
-                      {CCY.map((c) => (
-                        <option key={c} value={c}>
-                          {c}
+                    <label htmlFor="fc">You send from</label>
+                    <select id="fc" value={fromCountry} onChange={(e) => setFromCountry(e.target.value)}>
+                      {FROM.map((c) => (
+                        <option key={c.code} value={c.code}>
+                          {c.label}
                         </option>
                       ))}
                     </select>
+                  </div>
+                  <div className="field field--tight">
+                    <label htmlFor="dest">They receive in</label>
+                    <select id="dest" value={toCountry} onChange={(e) => setToCountry(e.target.value)}>
+                      {DESTINATIONS.map((d) => (
+                        <option key={d.code} value={d.code}>
+                          {d.label} ({d.sub})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="field-row field-row--tight">
+                    <div className="field field--tight">
+                      <label htmlFor="am">Amount</label>
+                      <input
+                        id="am"
+                        inputMode="decimal"
+                        value={amountStr}
+                        onChange={(e) => setAmountStr(e.target.value)}
+                      />
+                    </div>
+                    <div className="field field--tight">
+                      <label htmlFor="ccy">Your currency</label>
+                      <select id="ccy" value={fromCurrency} onChange={(e) => setFromCurrency(e.target.value)}>
+                        {CCY.map((c) => (
+                          <option key={c} value={c}>
+                            {c}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
                   </div>
                 </div>
                 <div className="rate-strip rate-strip--tight">
@@ -338,36 +340,38 @@ export function TransferApp() {
                 </p>
               </div>
               <div className="flow-step-main">
-                <div className="field field--tight">
-                  <label htmlFor="rn">Account holder</label>
-                  <input id="rn" value={recipientName} onChange={(e) => setRecipientName(e.target.value)} />
-                </div>
-                <div className="field field--tight">
-                  <label htmlFor="bk">Bank</label>
-                  <select id="bk" value={localBank} onChange={(e) => setLocalBank(e.target.value)}>
-                    {(bankList.length
-                      ? bankList
-                      : [
-                          { code: "BBL", name: "Bangkok Bank" },
-                          { code: "KBANK", name: "Kasikorn Bank" },
-                        ]
-                    ).map((b) => (
-                      <option key={b.code} value={b.code}>
-                        {b.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="field field--tight">
-                  <label htmlFor="acc">Account number</label>
-                  <input
-                    id="acc"
-                    inputMode="numeric"
-                    value={localAccount}
-                    onChange={(e) => setLocalAccount(e.target.value)}
-                    autoComplete="off"
-                    placeholder="6–20 digits (hyphens and spaces are OK)"
-                  />
+                <div className="flow-fields" aria-label="Recipient bank details">
+                  <div className="field field--tight">
+                    <label htmlFor="rn">Account holder</label>
+                    <input id="rn" value={recipientName} onChange={(e) => setRecipientName(e.target.value)} />
+                  </div>
+                  <div className="field field--tight">
+                    <label htmlFor="bk">Bank</label>
+                    <select id="bk" value={localBank} onChange={(e) => setLocalBank(e.target.value)}>
+                      {(bankList.length
+                        ? bankList
+                        : [
+                            { code: "BBL", name: "Bangkok Bank" },
+                            { code: "KBANK", name: "Kasikorn Bank" },
+                          ]
+                      ).map((b) => (
+                        <option key={b.code} value={b.code}>
+                          {b.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="field field--tight">
+                    <label htmlFor="acc">Account number</label>
+                    <input
+                      id="acc"
+                      inputMode="numeric"
+                      value={localAccount}
+                      onChange={(e) => setLocalAccount(e.target.value)}
+                      autoComplete="off"
+                      placeholder="6–20 digits (hyphens and spaces are OK)"
+                    />
+                  </div>
                 </div>
                 {!can2() && (
                   <p className="form-hint form-hint--step2 form-hint--compact" role="status">
@@ -401,19 +405,21 @@ export function TransferApp() {
                 <p className="flow-step-desc">We use this for your receipt and any important send updates—nothing spammy.</p>
               </div>
               <div className="flow-step-main">
-                <div className="field field--tight">
-                  <label htmlFor="sn">Full name</label>
-                  <input id="sn" value={senderName} onChange={(e) => setSenderName(e.target.value)} autoComplete="name" />
-                </div>
-                <div className="field field--tight">
-                  <label htmlFor="se">Email</label>
-                  <input
-                    id="se"
-                    type="email"
-                    value={senderEmail}
-                    onChange={(e) => setSenderEmail(e.target.value)}
-                    autoComplete="email"
-                  />
+                <div className="flow-fields" aria-label="Your contact details">
+                  <div className="field field--tight">
+                    <label htmlFor="sn">Full name</label>
+                    <input id="sn" value={senderName} onChange={(e) => setSenderName(e.target.value)} autoComplete="name" />
+                  </div>
+                  <div className="field field--tight">
+                    <label htmlFor="se">Email</label>
+                    <input
+                      id="se"
+                      type="email"
+                      value={senderEmail}
+                      onChange={(e) => setSenderEmail(e.target.value)}
+                      autoComplete="email"
+                    />
+                  </div>
                 </div>
               </div>
               <div className="flow-actions flow-step-actions">
