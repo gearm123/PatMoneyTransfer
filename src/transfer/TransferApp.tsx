@@ -155,131 +155,87 @@ export function TransferApp({ layout = "default" }: TransferAppProps) {
         clientSecret,
         appearance: {
           theme: "night",
-          variables: { colorPrimary: "#6366f1", colorBackground: "#0f172a", borderRadius: "12px" },
+          variables: {
+            colorPrimary: "#c45c26",
+            colorBackground: "#14161f",
+            colorText: "#f4f1ea",
+            colorDanger: "#f87171",
+            borderRadius: "12px",
+            fontFamily: "Plus Jakarta Sans, system-ui, sans-serif",
+            spacingUnit: "3px",
+          },
         },
       }
     : undefined;
 
   if (configOk === false) {
-    if (isHub) {
-      return (
-        <div className="card-panel config-empty config-empty--hub">
-          <p className="config-empty__hub-line" role="status">
-            <strong>Stripe not connected</strong> — add keys, then the flow below is live.
-          </p>
-          <p className="config-empty__hub-inline" aria-label="Transfer steps: amount, account, you, pay">
-            1 · Amount &nbsp;→&nbsp; 2 · TH account &nbsp;→&nbsp; 3 · You &nbsp;→&nbsp; 4 · Card
-          </p>
-          <p className="config-empty__code config-empty__code--tight">
-            <code className="mono">STRIPE_SECRET_KEY</code> in <code className="mono">server/.env</code> ·{" "}
-            <code className="mono">VITE_STRIPE_PUBLISHABLE_KEY</code> in <code className="mono">.env</code> — API on{" "}
-            <span className="mono">:4000</span>, <code className="mono">/api</code> via Vite
-          </p>
-        </div>
-      );
-    }
     return (
-      <div className="card-panel config-empty config-empty--in-flow">
-        <p className="config-empty__flow-label" role="status">
-          <strong>Payment is not live yet</strong> (developer setup) — the flow below is where card checkout will
-          live once Stripe is connected.
+      <div className="tf-offline" role="status">
+        <div className="tf-offline__icon" aria-hidden>
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"
+            />
+          </svg>
+        </div>
+        <h2 className="tf-offline__title">Checkout not connected</h2>
+        <p className="tf-offline__text">Add Stripe keys to enable card payment for this flow.</p>
+        <p className="tf-offline__steps" aria-label="Steps">
+          1 Amount · 2 Thai account · 3 You · 4 Card
         </p>
-        <ol className="config-empty__skeleton" aria-label="The four transfer steps">
-          {(
-            [
-              { n: 1, t: "Amount" },
-              { n: 2, t: "Thailand account" },
-              { n: 3, t: "Your details" },
-              { n: 4, t: "Card pay" },
-            ] as const
-          ).map((s) => (
-            <li key={s.n} className="config-empty__skel-step">
-              <span className="config-empty__skel-num" aria-hidden>
-                {s.n}
-              </span>
-              <span>{s.t}</span>
-            </li>
-          ))}
-        </ol>
-        <h2 className="config-empty__title">Connect Stripe to show card fields</h2>
-        <p className="config-empty__lede">Same panel — after keys, the steps above run for real, ending in card payment.</p>
-        <p className="config-empty__code">
-          <code className="mono">server/.env</code>: <code className="mono">STRIPE_SECRET_KEY=sk_…</code> ·{" "}
-          <code className="mono">.env</code>: <code className="mono">VITE_STRIPE_PUBLISHABLE_KEY=pk_…</code>
-        </p>
-        <p className="config-empty__api">
-          Run the API on port <span className="mono">4000</span> — Vite proxies <code className="mono">/api</code>.
-        </p>
+        <details className="tf-offline__dev">
+          <summary>Developer</summary>
+          <p>
+            <code className="mono">STRIPE_SECRET_KEY</code> in <code className="mono">server/.env</code>,{" "}
+            <code className="mono">VITE_STRIPE_PUBLISHABLE_KEY</code> in <code className="mono">.env</code>, API{" "}
+            <span className="mono">:4000</span>, <code className="mono">/api</code> via Vite.
+          </p>
+        </details>
       </div>
     );
   }
 
   if (configOk === null) {
-    return (
-      <div className="card-panel" style={{ padding: isHub ? "1rem" : "2.5rem", textAlign: "center" }}>
-        <p style={{ margin: 0, color: "var(--muted)" }}>{isHub ? "Loading…" : "Rounding up the essentials…"}</p>
-      </div>
-    );
+    return <div className="tf-loading">{isHub ? "Preparing…" : "Loading…"}</div>;
   }
 
   if (step === 5 && doneTransfer) {
     return (
-      <div className="card-panel success-panel success-panel--celebrate">
-        <div className="success-glitter" aria-hidden>
-          {Array.from({ length: 22 }, (_, i) => (
-            <span
-              key={i}
-              className="success-glitter__bit"
-              style={{
-                left: `${(i * 37) % 88 + 6}%`,
-                top: `${(i * 23) % 72 + 8}%`,
-                animationDelay: `${(i * 0.1).toFixed(2)}s`,
-              }}
-            />
-          ))}
-        </div>
-        <div className="success-icon success-icon--buffalo" aria-hidden>
-          ✓
-        </div>
-        <h2 className="success-headline">Amazing! You are now also a buffalo 😊</h2>
-        <p className="success-herd-wink">Welcome to the herd—glad you sent with us today.</p>
-        <h3 className="success-subtitle">Transfer received</h3>
-        <p>
-          Reference <span className="mono">{doneTransfer.id}</span> — you sent{" "}
+      <div className="tf-success">
+        <h2 className="tf-success__title">Paid</h2>
+        <h3 className="tf-success__h3">Details</h3>
+        <p className="tf-success__body">
+          <span className="mono">{doneTransfer.id}</span> · sent{" "}
           <span className="mono">
             {doneTransfer.amountSend} {doneTransfer.fromCurrency}
           </span>
-          {localCcy && (
+          {localCcy ? (
             <>
-              . Estimated for your recipient:{" "}
-              <span className="mono">
-                {doneTransfer.thbReceiveEstimate} {localCcy}
-              </span>{" "}
-              (indicative).
+              {" "}
+              · ≈ <span className="mono">{doneTransfer.thbReceiveEstimate}</span> {localCcy}
             </>
-          )}
+          ) : null}
         </p>
-        <p className="disclaimer" style={{ maxWidth: "36rem" }}>
-          Payout to the local bank is simulated in this demo. For production, connect a regulated payout
-          rail (e.g. Global Payouts, network partner).
-        </p>
+        <p className="tf-success__fine">Payout to bank is demo; production uses a regulated rail.</p>
         <button
           type="button"
-          className="btn btn-primary"
+          className="tf-success__btn"
           onClick={() => {
             setStep(1);
             setClientSecret(null);
             setDoneTransfer(null);
           }}
         >
-          New transfer
+          New send
         </button>
       </div>
     );
   }
 
   return (
-    <div className={`card-panel card-panel--send${isHub ? " card-panel--send-hub" : ""}`}>
+    <div className={isHub ? "tf" : "tf tf--full"}>
       <div className="send-flow send-flow--no-scroll">
         {isHub ? (
           <div className="send-flow-top send-flow-top--hub">
