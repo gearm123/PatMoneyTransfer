@@ -14,24 +14,12 @@ export default function App() {
           <div className="buffalo-atmosphere__mark buffalo-atmosphere__mark--2" />
         </div>
         <div className="app-shell app-shell--viewport app-shell--thailand">
-          <header className="site-header site-header--stacked">
-            <a href="/" className="site-header-brand" aria-label="BuffaloMoneySend home">
-              <span className="logo-mark" aria-hidden>
-                B
-              </span>
-              <span className="site-header-title__wordmark" translate="no">
-                Buffalo<span className="logo-wordmark-mid">Money</span>Send
-              </span>
-            </a>
-            <p className="site-header-strap">Send in THB from many countries</p>
-          </header>
-
           <main className="app-main app-main--thailand-hub" id="main">
-            <section className="thailand-hero" aria-labelledby="thailand-hero-title">
-              <div className="thailand-hero__figure" aria-hidden="true">
-                <div className="thailand-hero__ring">
+            <section className="hub-crest" aria-labelledby="hub-title">
+              <div className="hub-crest__media" aria-hidden="true">
+                <div className="hub-crest__ring">
                   <img
-                    className="thailand-hero__img"
+                    className="hub-crest__img"
                     src="/buffalo-hero.png"
                     alt=""
                     width={400}
@@ -40,66 +28,37 @@ export default function App() {
                     decoding="async"
                   />
                 </div>
-                <p className="thailand-hero__caption">The herd is the theme—the send is the product.</p>
               </div>
-              <p className="hero-eyebrow thailand-hero__eyebrow">Cross-border · built to stay calm</p>
-              <h1 id="thailand-hero-title" className="thailand-hero__title">
-                <span className="gradient-text">Send to Thailand</span>{" "}
-                <span className="thailand-hero__title-rest">— from your country, in a few steps</span>
-              </h1>
-              <p className="thailand-hero__lede">
-                <strong>BuffaloMoneySend</strong> is for people who need to support family, friends, and business
-                in <strong>Thailand (THB)</strong> from the US, UK, Europe, Australia, Canada, and more—upfront
-                numbers, a quiet interface, and card checkout. We keep things calm: the important updates, not a{" "}
-                <span className="hero-sub-wink" title="If you get the name, you get the joke.">
-                  notification stampede
+              <a href="/" className="hub-crest__brand" aria-label="BuffaloMoneySend home">
+                <span className="logo-mark" aria-hidden>
+                  B
                 </span>
-                .
+                <span className="hub-crest__wordmark" translate="no">
+                  Buffalo<span className="logo-wordmark-mid">Money</span>Send
+                </span>
+              </a>
+              <h1 id="hub-title" className="hub-crest__title">
+                <span className="gradient-text">Send to Thailand</span>{" "}
+                <span className="hub-crest__thb">(THB)</span>
+              </h1>
+              <p className="hub-crest__one">
+                Calm, cross-border sends—see the rate before you pay. One herd, not a stampede of noise.
               </p>
-              <ul className="thailand-hero__points" role="list">
-                <li>
-                  <span className="thailand-hero__point-ic" aria-hidden>
-                    ✦
-                  </span>{" "}
-                  Steady, secure card checkout
-                </li>
-                <li>
-                  <span className="thailand-hero__point-ic" aria-hidden>
-                    ⏱
-                  </span>{" "}
-                  See the route before you pay
-                </li>
-                <li>
-                  <span className="thailand-hero__point-ic" aria-hidden>
-                    ·
-                  </span>{" "}
-                  A growing community, not a stampede of email
-                </li>
-              </ul>
             </section>
 
-            <section className="thailand-workspace" aria-label="Payment and transfer">
+            <section className="thailand-workspace" aria-label="Transfer">
               <div className="payment-slab">
-                <header className="payment-slab__header">
-                  <div className="payment-slab__intro">
-                    <p className="payment-slab__eyebrow">Your payment &amp; send</p>
-                    <h2 className="payment-slab__title">Start here — this is the transfer flow</h2>
-                    <p className="payment-slab__hint">
-                      Amount → recipient in Thailand → your details → pay by card. Everything below is the live flow.
-                    </p>
-                  </div>
+                <header className="payment-slab__header payment-slab__header--tight">
+                  <h2 className="payment-slab__title">Start your send</h2>
                   <div className="payment-slab__badge" title="Payout in Thai Baht (THB)">
                     <span className="payment-slab__badge-flag" aria-hidden>
                       🇹🇭
                     </span>
-                    <div>
-                      <span className="payment-slab__badge-label">Receives in</span>
-                      <span className="payment-slab__badge-value">Thailand · THB</span>
-                    </div>
+                    <span className="payment-slab__badge-value">Thailand · THB</span>
                   </div>
                 </header>
-                <div className="flow-page-send__card" id="send">
-                  <TransferApp />
+                <div className="flow-page-send__card hub-send" id="send">
+                  <TransferApp layout="hub" />
                 </div>
               </div>
             </section>
@@ -107,8 +66,8 @@ export default function App() {
             <footer className="site-footer site-footer--thailand">
               <span className="footer-brand" translate="no">
                 BuffaloMoneySend
-              </span>{" "}
-              <span className="footer-motto">(The herd is metaphorical. The send is real.)</span>
+              </span>
+              <span className="footer-motto"> — The herd is metaphorical. The send is real.</span>
             </footer>
           </main>
         </div>

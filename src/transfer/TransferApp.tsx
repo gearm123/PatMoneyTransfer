@@ -44,7 +44,13 @@ function StepTracker({ current }: { current: 1 | 2 | 3 | 4 }) {
   );
 }
 
-export function TransferApp() {
+type TransferAppProps = {
+  /** Tighter copy and header; used on the main marketing shell */
+  layout?: "default" | "hub";
+};
+
+export function TransferApp({ layout = "default" }: TransferAppProps) {
+  const isHub = layout === "hub";
   const [configOk, setConfigOk] = useState<boolean | null>(null);
   const [bankList, setBankList] = useState<{ code: string; name: string }[]>([]);
   const [step, setStep] = useState<Step>(1);
@@ -155,6 +161,23 @@ export function TransferApp() {
     : undefined;
 
   if (configOk === false) {
+    if (isHub) {
+      return (
+        <div className="card-panel config-empty config-empty--hub">
+          <p className="config-empty__hub-line" role="status">
+            <strong>Stripe not connected</strong> — add keys, then the flow below is live.
+          </p>
+          <p className="config-empty__hub-inline" aria-label="Transfer steps: amount, account, you, pay">
+            1 · Amount &nbsp;→&nbsp; 2 · TH account &nbsp;→&nbsp; 3 · You &nbsp;→&nbsp; 4 · Card
+          </p>
+          <p className="config-empty__code config-empty__code--tight">
+            <code className="mono">STRIPE_SECRET_KEY</code> in <code className="mono">server/.env</code> ·{" "}
+            <code className="mono">VITE_STRIPE_PUBLISHABLE_KEY</code> in <code className="mono">.env</code> — API on{" "}
+            <span className="mono">:4000</span>, <code className="mono">/api</code> via Vite
+          </p>
+        </div>
+      );
+    }
     return (
       <div className="card-panel config-empty config-empty--in-flow">
         <p className="config-empty__flow-label" role="status">
@@ -193,8 +216,8 @@ export function TransferApp() {
 
   if (configOk === null) {
     return (
-      <div className="card-panel" style={{ padding: "2.5rem", textAlign: "center" }}>
-        <p style={{ margin: 0, color: "var(--muted)" }}>Rounding up the essentials…</p>
+      <div className="card-panel" style={{ padding: isHub ? "1rem" : "2.5rem", textAlign: "center" }}>
+        <p style={{ margin: 0, color: "var(--muted)" }}>{isHub ? "Loading…" : "Rounding up the essentials…"}</p>
       </div>
     );
   }
@@ -256,16 +279,22 @@ export function TransferApp() {
   }
 
   return (
-    <div className="card-panel card-panel--send">
+    <div className={`card-panel card-panel--send${isHub ? " card-panel--send-hub" : ""}`}>
       <div className="send-flow send-flow--no-scroll">
-        <div className="send-flow-top">
-          <p className="send-flow-eyebrow" translate="no">
-            BuffaloMoneySend
-          </p>
-          <h2 className="send-flow-title">Start your send</h2>
-          <p className="send-flow-motto">The community grows one send at a time. Yours is next.</p>
-          {step >= 1 && step <= 4 && <StepTracker current={step as 1 | 2 | 3 | 4} />}
-        </div>
+        {isHub ? (
+          <div className="send-flow-top send-flow-top--hub">
+            {step >= 1 && step <= 4 && <StepTracker current={step as 1 | 2 | 3 | 4} />}
+          </div>
+        ) : (
+          <div className="send-flow-top">
+            <p className="send-flow-eyebrow" translate="no">
+              BuffaloMoneySend
+            </p>
+            <h2 className="send-flow-title">Start your send</h2>
+            <p className="send-flow-motto">The community grows one send at a time. Yours is next.</p>
+            {step >= 1 && step <= 4 && <StepTracker current={step as 1 | 2 | 3 | 4} />}
+          </div>
+        )}
         <div className="send-flow-body">
           {err && (
             <div className="error-banner error-banner--flow" role="alert">
@@ -276,12 +305,19 @@ export function TransferApp() {
           {step === 1 && (
             <div className="flow-step" key="step-1">
               <div className="flow-step-lead">
-                <h3 className="flow-step-title">How much and where</h3>
+                <h3 className="flow-step-title">{isHub ? "Route & amount" : "How much and where"}</h3>
                 <p className="flow-step-desc">
-                  You send from your country, your recipient is paid in <strong>Thailand (THB)</strong>. Enter the
-                  amount to see a THB estimate before the next step.
+                  {isHub
+                    ? "Your country, amount, and currency. Estimate in THB below."
+                    : "You send from your country, your recipient is paid in "}
+                  {!isHub && (
+                    <>
+                      <strong>Thailand (THB)</strong>. Enter the
+                      amount to see a THB estimate before the next step.
+                    </>
+                  )}
                 </p>
-                <p className="flow-step-note">Thailand is the first corridor in this app—more can follow later.</p>
+                {!isHub && <p className="flow-step-note">Thailand is the first corridor in this app—more can follow later.</p>}
               </div>
               <div className="flow-step-main">
                 <div className="flow-fields" aria-label="Send amount and route">
@@ -331,9 +367,11 @@ export function TransferApp() {
                   {localEst != null ? (
                     <span>
                       ≈ <strong className="mono">{localEst.toFixed(2)} {localCcy}</strong> to your recipient
-                      <span className="rate-strip__foot">
-                        Indicative rate for {destLabel}. Final amount is set at payout.
-                      </span>
+                      {!isHub && (
+                        <span className="rate-strip__foot">
+                          Indicative rate for {destLabel}. Final amount is set at payout.
+                        </span>
+                      )}
                     </span>
                   ) : (
                     <span className="rate-strip__empty">Enter an amount to see an estimate in local currency.</span>
@@ -353,7 +391,16 @@ export function TransferApp() {
               <div className="flow-step-lead">
                 <h3 className="flow-step-title">Recipient &amp; account</h3>
                 <p className="flow-step-desc">
-                  <strong className="flow-step-desc-strong">{destLabel}</strong> account details only—type them exactly as on the bank book or app.
+                  {isHub ? (
+                    <>
+                      <strong className="flow-step-desc-strong">Thailand</strong> account — as on the bank book.
+                    </>
+                  ) : (
+                    <>
+                      <strong className="flow-step-desc-strong">{destLabel}</strong> account details only—type them
+                      exactly as on the bank book or app.
+                    </>
+                  )}
                 </p>
               </div>
               <div className="flow-step-main">
@@ -402,7 +449,9 @@ export function TransferApp() {
                     {recipientName.trim().length >= 2 && accountDigits.length > 20 && <span>At most 20 digits.</span>}
                   </p>
                 )}
-                <p className="flow-step-foot">Wrong details can delay or fail the transfer—double-check before you continue.</p>
+                {!isHub && (
+                  <p className="flow-step-foot">Wrong details can delay or fail the transfer—double-check before you continue.</p>
+                )}
               </div>
               <div className="flow-actions flow-step-actions">
                 <button type="button" className="btn btn-ghost" onClick={() => setStep(1)}>
@@ -419,7 +468,9 @@ export function TransferApp() {
             <div className="flow-step" key="step-3">
               <div className="flow-step-lead">
                 <h3 className="flow-step-title">Your details</h3>
-                <p className="flow-step-desc">We use this for your receipt and any important send updates—nothing spammy.</p>
+                <p className="flow-step-desc">
+                  {isHub ? "Receipt and important updates only." : "We use this for your receipt and any important send updates—nothing spammy."}
+                </p>
               </div>
               <div className="flow-step-main">
                 <div className="flow-fields" aria-label="Your contact details">
@@ -456,8 +507,17 @@ export function TransferApp() {
                 <span className="flow-step-kicker">Secure checkout</span>
                 <h3 className="flow-step-title">Pay with your card</h3>
                 <p className="flow-step-desc">
-                  Your details are processed by Stripe. For testing, use card <span className="mono pay-hilite">4242 4242 4242 4242</span>, a future
-                  date, and any CVC.
+                  {isHub ? (
+                    <>
+                      Stripe. Test: <span className="mono pay-hilite">4242 4242 4242 4242</span> · future exp · any CVC
+                    </>
+                  ) : (
+                    <>
+                      Your details are processed by Stripe. For testing, use card{" "}
+                      <span className="mono pay-hilite">4242 4242 4242 4242</span>, a future
+                      date, and any CVC.
+                    </>
+                  )}
                 </p>
               </div>
               <div className="flow-step-main flow-step-main--pay">
