@@ -11,7 +11,7 @@ export default function App() {
           <div className="buffalo-atmosphere__mark buffalo-atmosphere__mark--2" />
         </div>
         <div className="app-shell app-shell--viewport app-shell--thailand">
-          <header className="site-header site-header--bar">
+          <header className="site-header site-header--stacked">
             <a href="/" className="site-header-brand" aria-label="BuffaloMoneySend home">
               <span className="logo-mark" aria-hidden>
                 B
@@ -21,6 +21,17 @@ export default function App() {
               </span>
             </a>
             <p className="site-header-strap">Send in THB from many countries</p>
+            <div className="gearm-signature" aria-label="Signature: Gearm">
+              <img
+                className="gearm-signature__img"
+                src="/gearm-signature.png"
+                alt="Gearm"
+                width={240}
+                height={80}
+                loading="eager"
+                decoding="async"
+              />
+            </div>
           </header>
 
           <main className="app-main app-main--thailand-hub" id="main">
@@ -78,7 +89,7 @@ export default function App() {
             <section className="thailand-workspace" aria-label="Payment and transfer">
               <div className="payment-slab">
                 <header className="payment-slab__header">
-                  <div>
+                  <div className="payment-slab__intro">
                     <p className="payment-slab__eyebrow">Your payment &amp; send</p>
                     <h2 className="payment-slab__title">Start here — this is the transfer flow</h2>
                     <p className="payment-slab__hint">
