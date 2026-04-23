@@ -439,25 +439,30 @@ textarea {
     min-height: 0;
     overflow: hidden;
     max-width: none;
-    padding: 0.25rem 0.2rem 0.45rem;
+    padding: 0.75rem 0.9rem 0.85rem;
     margin: 0;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
-    grid-template-rows: auto auto auto auto;
-    column-gap: min(1.5rem, 3vw);
-    row-gap: 0.2rem;
+    /* One band: kicker full width, then two columns (head + body align on same baseline row) */
+    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.2fr);
+    column-gap: min(1.25rem, 2.5vw);
+    row-gap: 0.3rem;
     align-items: start;
-    border-bottom: 1px solid rgba(99, 102, 241, 0.1);
-    background: linear-gradient(180deg, rgba(99, 102, 241, 0.03) 0%, transparent 100%);
-    border-radius: 0 0 16px 16px;
+    border: 1px solid rgba(99, 102, 241, 0.12);
+    background: linear-gradient(165deg, rgba(255, 255, 255, 0.72) 0%, rgba(240, 244, 255, 0.5) 45%, rgba(99, 102, 241, 0.05) 100%);
+    border-radius: 16px;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.85) inset, 0 8px 28px -20px rgba(15, 23, 42, 0.12);
   }
 
   .hero-landing--stack .hero-eyebrow {
-    grid-column: 1;
+    grid-column: 1 / -1;
     grid-row: 1;
     font-size: 0.6rem;
-    margin-bottom: 0;
-    letter-spacing: 0.1em;
+    margin: 0 0 0.15rem;
+    letter-spacing: 0.12em;
+    text-align: left;
+    padding-bottom: 0.35rem;
+    border-bottom: 1px solid rgba(99, 102, 241, 0.1);
+    color: var(--accent);
   }
 
   .hero-landing--stack .hero-title {
@@ -466,7 +471,7 @@ textarea {
     font-size: clamp(1.1rem, 2.1vh, 1.5rem);
     line-height: 1.2;
     margin: 0;
-    max-width: 20ch;
+    max-width: 22ch;
   }
 
   .hero-landing--stack .hero-tagline {
@@ -478,13 +483,16 @@ textarea {
     padding: 0.2rem 0.45rem;
   }
 
+  /* Body copy starts in line with the headline, not the kicker — reads as one horizontal block */
   .hero-landing--stack .hero-sub {
     grid-column: 2;
-    grid-row: 1 / 5;
+    grid-row: 2 / 5;
     font-size: 0.75rem;
-    line-height: 1.4;
+    line-height: 1.45;
     margin: 0;
     max-width: none;
+    padding: 0 0 0 0.9rem;
+    border-left: 1px solid rgba(99, 102, 241, 0.15);
   }
 
   .hero-landing--stack .trust-pills {
@@ -506,10 +514,80 @@ textarea {
     position: relative;
     isolation: isolate;
     flex: 1 1 0;
-    min-height: clamp(200px, 34vh, 480px);
+    /* Form card gets enough height so step fields rarely need an inner scroll */
+    min-height: clamp(300px, 50vh, 640px);
     display: flex;
     flex-direction: column;
     overflow: hidden;
+  }
+
+  /* More room for the send flow: compact header, open inputs, no nested scroll in body */
+  .app-shell--stack .send-flow {
+    padding: 0.7rem 1rem 0.9rem;
+    min-height: 0;
+    justify-content: flex-start;
+  }
+
+  .app-shell--stack .send-flow-top {
+    margin-bottom: 0.4rem;
+  }
+
+  .app-shell--stack .send-flow-title {
+    font-size: 1.08rem;
+    line-height: 1.2;
+  }
+
+  .app-shell--stack .send-flow-motto {
+    font-size: 0.74rem;
+    line-height: 1.4;
+    margin: 0.2rem 0 0;
+  }
+
+  .app-shell--stack .step-tracker--compact {
+    margin: 0.4rem 0 0;
+  }
+
+  .app-shell--stack .send-flow-body {
+    overflow: visible;
+    min-height: 0;
+  }
+
+  .app-shell--stack .hero-panel .card-panel--send {
+    min-height: 0;
+  }
+
+  .app-shell--stack .flow-step-lead {
+    margin-bottom: 0.5rem;
+  }
+
+  .app-shell--stack .flow-fields {
+    padding: 0.9rem 1rem 1rem;
+  }
+
+  .app-shell--stack .field--tight {
+    margin-bottom: 0.7rem;
+  }
+
+  .app-shell--stack .field--tight > label {
+    margin-bottom: 0.32rem;
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+  }
+
+  .app-shell--stack .field--tight input,
+  .app-shell--stack .field--tight select {
+    min-height: 2.75rem;
+    padding: 0.65rem 0.8rem;
+    font-size: 0.95rem;
+  }
+
+  .app-shell--stack .rate-strip--tight {
+    margin-top: 0.65rem;
+    padding: 0.65rem 0.8rem;
+  }
+
+  .app-shell--stack .flow-step-actions {
+    padding-top: 0.85rem;
   }
 
   .hero-panel::before {
@@ -567,12 +645,23 @@ textarea {
   }
 }
 
+/* Short viewports: cap marketing height so the send card can use vertical space */
+@media (min-width: 900px) and (max-height: 820px) {
+  .app-shell--stack .hero-landing--stack .hero-copy {
+    max-height: min(32vh, 14rem);
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+  }
+}
+
 /* Stack layout: on narrow desktop width, single-column copy (still above card) */
 @media (min-width: 900px) and (max-width: 1024px) {
   .hero-landing--stack .hero-copy {
     grid-template-columns: 1fr;
     grid-template-rows: auto;
-    row-gap: 0.35rem;
+    row-gap: 0.4rem;
   }
 
   .hero-landing--stack .hero-eyebrow,
@@ -586,6 +675,11 @@ textarea {
 
   .hero-landing--stack .hero-title {
     max-width: 36ch;
+  }
+
+  .hero-landing--stack .hero-sub {
+    padding-left: 0;
+    border-left: none;
   }
 }
 
@@ -796,10 +890,7 @@ textarea {
   min-height: 0;
   display: flex;
   flex-direction: column;
-  overflow-x: hidden;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  -webkit-overflow-scrolling: touch;
+  overflow: visible;
   gap: 0;
 }
 
