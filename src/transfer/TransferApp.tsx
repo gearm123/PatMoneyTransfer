@@ -1,11 +1,19 @@
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe, type StripeElementsOptions } from "@stripe/stripe-js";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { createTransfer, getQuote, getTransferConfig, type Transfer } from "./api";
+import {
+  completeTransfer,
+  createTransfer,
+  getQuote,
+  getTransferConfig,
+  validateThaiBankAccountInput,
+  type Transfer,
+} from "./api";
 import { readTransferConfigCache, writeTransferConfigCache } from "./configCache";
 import { CheckoutForm } from "./CheckoutForm";
 
-const FROM = [
+/** Fallback if API not loaded yet — must match server `sourceCountries` (Thunes `country_iso_code` alpha-3). */
+const FALLBACK_SOURCE_COUNTRIES = [
   { code: "USA", label: "United States" },
   { code: "GBR", label: "United Kingdom" },
   { code: "DEU", label: "Germany" },
@@ -21,19 +29,53 @@ const STEP_LABELS = ["Amount", "Recipient", "Your details", "Pay"] as const;
 
 const defaultPk = (import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY as string | undefined) || "";
 
-function initialConfigState(): { ok: boolean | null; banks: { code: string; name: string }[] } {
+function thunesPayoutSummary(t: Transfer): { kind: "ok" | "err" | "pending" | "unknown"; line: string; sub?: string } {
+  const s = t.status;
+  if (s === "payout_error") {
+    return {
+      kind: "err",
+      line: "The bank transfer step did not complete.",
+      sub: t.lastError,
+    };
+  }
+  if (s === "payout_completed" || s === "payout_queued_simulation") {
+    return {
+      kind: "ok",
+      line: "Payout to the Thai account was submitted via Thunes.",
+      sub:
+        t.thunesTransactionId != null
+          ? `Thunes transaction id: ${t.thunesTransactionId}`
+          : t.thunesQuotationId != null
+            ? `Thunes quotation id: ${t.thunesQuotationId}`
+            : undefined,
+    };
+  }
+  if (s === "payout_processing") {
+    return { kind: "pending", line: "Bank transfer is being processed…" };
+  }
+  return { kind: "unknown", line: "Transfer status: " + s };
+}
+
+function initialConfigState(): {
+  ok: boolean | null;
+  banks: { code: string; name: string }[];
+  sourceCountries: { code: string; label: string }[];
+} {
   const cached = readTransferConfigCache();
   if (cached) {
+    const ready = "checkoutReady" in cached && typeof cached.checkoutReady === "boolean" ? cached.checkoutReady : cached.stripe;
     return {
-      ok: cached.stripe,
+      ok: ready,
       banks: cached.thaiBanks?.length ? cached.thaiBanks : [],
+      sourceCountries:
+        cached.sourceCountries && cached.sourceCountries.length > 0 ? cached.sourceCountries : FALLBACK_SOURCE_COUNTRIES,
     };
   }
   // Publishable key present ⇒ assume checkout is available while API cold-starts (Render, etc.)
   if (defaultPk) {
-    return { ok: true, banks: [] };
+    return { ok: true, banks: [], sourceCountries: FALLBACK_SOURCE_COUNTRIES };
   }
-  return { ok: null, banks: [] };
+  return { ok: null, banks: [], sourceCountries: FALLBACK_SOURCE_COUNTRIES };
 }
 
 type Step = 1 | 2 | 3 | 4 | 5;
@@ -79,6 +121,9 @@ export function TransferApp({ layout = "default" }: TransferAppProps) {
   const isHub = layout === "hub";
   const [configOk, setConfigOk] = useState<boolean | null>(() => initialConfigState().ok);
   const [bankList, setBankList] = useState<{ code: string; name: string }[]>(() => initialConfigState().banks);
+  const [sourceCountries, setSourceCountries] = useState<{ code: string; label: string }[]>(
+    () => initialConfigState().sourceCountries
+  );
   const [step, setStep] = useState<Step>(1);
   const [fromCountry, setFromCountry] = useState("USA");
   const [toCountry, setToCountry] = useState("THA");
@@ -95,7 +140,11 @@ export function TransferApp({ layout = "default" }: TransferAppProps) {
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [activePk, setActivePk] = useState<string>(defaultPk);
   const [doneTransfer, setDoneTransfer] = useState<Transfer | null>(null);
+  const [payMode, setPayMode] = useState<"stripe" | "thunes" | null>(null);
+  const [thunesPaymentUrl, setThunesPaymentUrl] = useState<string | null>(null);
+  const [thunesCompleting, setThunesCompleting] = useState(false);
   const [err, setErr] = useState("");
+  const [step2Validating, setStep2Validating] = useState(false);
 
   const destLabel = useMemo(
     () => DESTINATIONS.find((d) => d.code === toCountry)?.label ?? "Destination",
@@ -123,8 +172,9 @@ export function TransferApp({ layout = "default" }: TransferAppProps) {
         try {
           const c = await getTransferConfig();
           if (cancelled) return;
-          setConfigOk(c.stripe);
+          setConfigOk(c.checkoutReady ?? c.stripe);
           if (c.thaiBanks?.length) setBankList(c.thaiBanks);
+          if (c.sourceCountries?.length) setSourceCountries(c.sourceCountries);
           writeTransferConfigCache(c);
           return;
         } catch {
@@ -138,6 +188,30 @@ export function TransferApp({ layout = "default" }: TransferAppProps) {
     return () => {
       cancelled = true;
     };
+  }, []);
+
+  /** Thunes redirect return (live Accept): complete payout after the payer returns from the hosted pay page. */
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const p = new URLSearchParams(window.location.search);
+    if (p.get("transferReturn") !== "1") return;
+    const id = p.get("transferId");
+    if (!id) return;
+    setThunesCompleting(true);
+    setErr("");
+    void completeTransfer({ transferId: id })
+      .then((c) => {
+        setDoneTransfer(c.transfer);
+        setStep(5);
+      })
+      .catch((e) => {
+        setErr(e instanceof Error ? e.message : "Could not complete transfer");
+      })
+      .finally(() => {
+        setThunesCompleting(false);
+        const path = window.location.pathname + window.location.hash;
+        window.history.replaceState({}, "", path);
+      });
   }, []);
 
   const refreshQuote = useCallback(() => {
@@ -175,14 +249,35 @@ export function TransferApp({ layout = "default" }: TransferAppProps) {
   const can2 = () =>
     recipientName.trim().length >= 2 &&
     accountDigits.length >= 6 &&
-    accountDigits.length <= 20;
+    accountDigits.length <= 16;
   const can3 = () => senderName.trim().length > 1 && senderEmail.includes("@");
+
+  const goStep2Next = async () => {
+    if (!can2()) return;
+    setErr("");
+    setStep2Validating(true);
+    try {
+      const r = await validateThaiBankAccountInput({
+        thaiBankCode: localBank,
+        thaiAccountNumber: localAccount.trim(),
+      });
+      if (!r.ok) {
+        setErr(r.error);
+        return;
+      }
+      setStep(3);
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : "Could not validate account");
+    } finally {
+      setStep2Validating(false);
+    }
+  };
 
   const goPreparePayment = async () => {
     setErr("");
     const n = Number.parseFloat(amountStr);
     try {
-      const { clientSecret: cs, publishableKey, transfer } = await createTransfer({
+      const r = await createTransfer({
         fromCountry,
         fromCurrency,
         amount: n,
@@ -192,9 +287,30 @@ export function TransferApp({ layout = "default" }: TransferAppProps) {
         thaiBankCode: localBank,
         thaiAccountNumber: localAccount.trim(),
       });
-      setActivePk(publishableKey || defaultPk);
-      setClientSecret(cs);
-      setDoneTransfer(transfer);
+      setPayMode(r.paymentProvider);
+      setDoneTransfer(r.transfer);
+      if (r.paymentProvider === "thunes") {
+        setClientSecret(null);
+        setThunesPaymentUrl(r.paymentUrl);
+        if (!r.paymentUrl) {
+          setThunesCompleting(true);
+          try {
+            const c = await completeTransfer({ transferId: r.transfer.id });
+            setDoneTransfer(c.transfer);
+            setStep(5);
+          } catch (e) {
+            setErr(e instanceof Error ? e.message : "Could not complete Thunes payment and payout");
+          } finally {
+            setThunesCompleting(false);
+          }
+          return;
+        }
+        setStep(4);
+        return;
+      }
+      setActivePk(r.publishableKey || defaultPk);
+      setClientSecret(r.clientSecret);
+      setThunesPaymentUrl(null);
       setStep(4);
     } catch (e) {
       setErr(e instanceof Error ? e.message : "Could not start payment");
@@ -237,16 +353,18 @@ export function TransferApp({ layout = "default" }: TransferAppProps) {
           </svg>
         </div>
         <h2 className="tf-offline__title">Checkout not connected</h2>
-        <p className="tf-offline__text">Add Stripe keys to enable card payment for this flow.</p>
+        <p className="tf-offline__text">
+          Configure <strong>Thunes</strong> (Accept + Money Transfer) or <strong>Stripe</strong> on the API—see <code className="mono">PAYMENT_PROVIDER</code> in server env.
+        </p>
         <p className="tf-offline__steps" aria-label="Steps">
           1 Amount · 2 Thai account · 3 You · 4 Card
         </p>
         <details className="tf-offline__dev">
           <summary>Developer</summary>
           <p>
-            <code className="mono">STRIPE_SECRET_KEY</code> in <code className="mono">server/.env</code>,{" "}
-            <code className="mono">VITE_STRIPE_PUBLISHABLE_KEY</code> in <code className="mono">.env</code>, API{" "}
-            <span className="mono">:4000</span>, <code className="mono">/api</code> via Vite.
+            Thunes: <code className="mono">PAYMENT_PROVIDER=thunes</code>, <code className="mono">THUNES_USE_MOCK=true</code> (dev), or live keys + <code className="mono">THUNES_ACCEPT_MERCHANT_ID</code> and{" "}
+            <code className="mono">THUNES_ACCEPT_PAYMENT_PAGE_ID</code>. Stripe: <code className="mono">PAYMENT_PROVIDER=stripe</code>, <code className="mono">STRIPE_SECRET_KEY</code> and <code className="mono">VITE_STRIPE_PUBLISHABLE_KEY</code> for
+            embedded pay.
           </p>
         </details>
       </div>
@@ -257,6 +375,10 @@ export function TransferApp({ layout = "default" }: TransferAppProps) {
     return <div className="tf-loading">{isHub ? "Preparing…" : "Loading…"}</div>;
   }
 
+  if (thunesCompleting) {
+    return <div className="tf-loading">{isHub ? "Processing payment & payout…" : "Finishing your send…"}</div>;
+  }
+
   if (step === 5 && doneTransfer) {
     return (
       <div className="tf-success">
@@ -265,6 +387,32 @@ export function TransferApp({ layout = "default" }: TransferAppProps) {
         </div>
         <h2 className="tf-success__welcome">Welcome buffalo</h2>
         <p className="tf-success__paidline">Payment received</p>
+        {(() => {
+          const ps = thunesPayoutSummary(doneTransfer);
+          if (ps.kind === "err") {
+            return (
+              <div className="tf-success__payout tf-success__payout--err" role="status">
+                <p className="tf-success__payout-line">{ps.line}</p>
+                {ps.sub ? <p className="tf-success__payout-sub mono">{ps.sub}</p> : null}
+                <p className="tf-success__fine">Your card charge may still have succeeded. Keep this reference and contact support with your transfer id.</p>
+              </div>
+            );
+          }
+          return (
+            <div
+              className={
+                ps.kind === "pending" ? "tf-success__payout tf-success__payout--pending" : "tf-success__payout tf-success__payout--ok"
+              }
+              role="status"
+            >
+              <p className="tf-success__payout-line">{ps.line}</p>
+              {ps.sub ? <p className="tf-success__payout-sub mono">{ps.sub}</p> : null}
+              {ps.kind === "ok" ? (
+                <p className="tf-success__fine">Settlement to your Thunes float and bank cut-off times are separate from this confirmation.</p>
+              ) : null}
+            </div>
+          );
+        })()}
         <h3 className="tf-success__h3">Details</h3>
         <p className="tf-success__body">
           <span className="mono">{doneTransfer.id}</span>
@@ -298,13 +446,14 @@ export function TransferApp({ layout = "default" }: TransferAppProps) {
             </>
           ) : null}
         </p>
-        <p className="tf-success__fine">Payout to bank is demo; production uses a regulated rail.</p>
         <button
           type="button"
           className="tf-success__btn"
           onClick={() => {
             setStep(1);
             setClientSecret(null);
+            setPayMode(null);
+            setThunesPaymentUrl(null);
             setDoneTransfer(null);
           }}
         >
@@ -360,9 +509,9 @@ export function TransferApp({ layout = "default" }: TransferAppProps) {
                   <div className="field field--tight">
                     <label htmlFor="fc">You send from</label>
                     <select id="fc" value={fromCountry} onChange={(e) => setFromCountry(e.target.value)}>
-                      {FROM.map((c) => (
+                      {sourceCountries.map((c) => (
                         <option key={c.code} value={c.code}>
-                          {c.label}
+                          {c.label} ({c.code})
                         </option>
                       ))}
                     </select>
@@ -495,7 +644,7 @@ export function TransferApp({ layout = "default" }: TransferAppProps) {
                       value={localAccount}
                       onChange={(e) => setLocalAccount(e.target.value)}
                       autoComplete="off"
-                      placeholder="6–20 digits (hyphens and spaces are OK)"
+                      placeholder="Digits only as on the passbook (length depends on bank)"
                     />
                   </div>
                 </div>
@@ -508,7 +657,7 @@ export function TransferApp({ layout = "default" }: TransferAppProps) {
                         {accountDigits.length > 0 ? " (non-digits ignored)." : ". Try 1234567890 for tests."}
                       </span>
                     )}
-                    {recipientName.trim().length >= 2 && accountDigits.length > 20 && <span>At most 20 digits.</span>}
+                    {recipientName.trim().length >= 2 && accountDigits.length > 16 && <span>At most 16 digits.</span>}
                   </p>
                 )}
                 {!isHub && (
@@ -519,8 +668,13 @@ export function TransferApp({ layout = "default" }: TransferAppProps) {
                 <button type="button" className="btn btn-ghost" onClick={() => setStep(1)}>
                   Back
                 </button>
-                <button type="button" className="btn btn-primary" onClick={() => can2() && setStep(3)} disabled={!can2()}>
-                  Continue
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={() => void goStep2Next()}
+                  disabled={!can2() || step2Validating}
+                >
+                  {step2Validating ? "Checking…" : "Continue"}
                 </button>
               </div>
             </div>
@@ -563,7 +717,48 @@ export function TransferApp({ layout = "default" }: TransferAppProps) {
             </div>
           )}
 
-          {step === 4 && clientSecret && options && stripePromise && doneTransfer && (
+          {step === 4 && payMode === "thunes" && thunesPaymentUrl && doneTransfer && (
+            <div className="flow-step flow-step--pay" key="step-4-thunes">
+              <div className="flow-step-lead flow-step-lead--pay">
+                <span className="flow-step-kicker">Thunes</span>
+                <h3 className="flow-step-title">Complete your card payment</h3>
+                <p className="pay-total" aria-label="Total to charge">
+                  <span className="pay-total__label">Total to charge</span>{" "}
+                  <span className="mono pay-total__value">
+                    {typeof doneTransfer.totalCharged === "number"
+                      ? doneTransfer.totalCharged.toFixed(2)
+                      : doneTransfer.amountSend}{" "}
+                    {doneTransfer.fromCurrency}
+                  </span>
+                  {typeof doneTransfer.platformFee === "number" && doneTransfer.platformFee > 0 ? (
+                    <span className="pay-total__sub"> (incl. {doneTransfer.platformFee.toFixed(2)} service fee)</span>
+                  ) : null}
+                </p>
+                <p className="flow-step-desc">You are redirected to a secure Thunes page to pay. You will return here to confirm your send to Thailand.</p>
+              </div>
+              <div className="flow-step-main">
+                <a className="btn btn-primary" href={thunesPaymentUrl} rel="noreferrer" target="_self">
+                  Open secure payment
+                </a>
+              </div>
+              <div className="flow-actions flow-step-actions">
+                <button
+                  type="button"
+                  className="btn btn-ghost"
+                  onClick={() => {
+                    setStep(3);
+                    setThunesPaymentUrl(null);
+                    setPayMode(null);
+                    setClientSecret(null);
+                  }}
+                >
+                  Back
+                </button>
+              </div>
+            </div>
+          )}
+
+          {step === 4 && payMode === "stripe" && clientSecret && options && stripePromise && doneTransfer && (
             <div className="flow-step flow-step--pay" key="step-4">
               <div className="flow-step-lead flow-step-lead--pay">
                 <span className="flow-step-kicker">Secure checkout</span>
@@ -611,6 +806,7 @@ export function TransferApp({ layout = "default" }: TransferAppProps) {
                   onClick={() => {
                     setStep(3);
                     setClientSecret(null);
+                    setPayMode(null);
                   }}
                 >
                   Back
@@ -619,7 +815,7 @@ export function TransferApp({ layout = "default" }: TransferAppProps) {
             </div>
           )}
 
-          {step === 4 && clientSecret && !stripePromise && (
+          {step === 4 && payMode === "stripe" && clientSecret && !stripePromise && (
             <p className="error-banner error-banner--flow">Set <span className="mono">VITE_STRIPE_PUBLISHABLE_KEY</span> in your <span className="mono">.env</span> file.</p>
           )}
         </div>

@@ -1,6 +1,6 @@
 import type { TransferConfig } from "./api";
 
-const KEY = "bms_transfer_config_v1";
+const KEY = "bms_transfer_config_v2";
 const TTL_MS = 15 * 60 * 1000;
 
 type Cached = TransferConfig & { savedAt: number };
@@ -11,7 +11,11 @@ export function readTransferConfigCache(): Cached | null {
     const raw = sessionStorage.getItem(KEY);
     if (!raw) return null;
     const p = JSON.parse(raw) as Cached;
-    if (!p || typeof p.savedAt !== "number" || typeof p.stripe !== "boolean") {
+    if (
+      !p ||
+      typeof p.savedAt !== "number" ||
+      (typeof p.stripe !== "boolean" && typeof p.checkoutReady !== "boolean")
+    ) {
       sessionStorage.removeItem(KEY);
       return null;
     }

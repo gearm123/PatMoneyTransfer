@@ -1167,6 +1167,48 @@ textarea {
   margin: 0 0 0.4rem;
   letter-spacing: 0.02em;
 }
+.tf-success__payout {
+  width: 100%;
+  max-width: 34ch;
+  margin: 0 0 0.5rem;
+  padding: 0.45rem 0.5rem;
+  border-radius: 10px;
+  text-align: left;
+  box-sizing: border-box;
+  border: 1px solid rgba(30, 58, 95, 0.12);
+  background: rgba(255, 255, 255, 0.6);
+}
+.tf-success__payout--ok {
+  border-color: rgba(13, 79, 60, 0.25);
+  background: rgba(236, 253, 245, 0.5);
+}
+.tf-success__payout--err {
+  border-color: rgba(180, 60, 50, 0.35);
+  background: rgba(254, 242, 242, 0.75);
+}
+.tf-success__payout--pending {
+  border-color: rgba(180, 120, 30, 0.35);
+  background: rgba(255, 251, 235, 0.9);
+}
+.tf-success__payout-line {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--navy-2);
+  margin: 0 0 0.2rem;
+  line-height: 1.35;
+}
+.tf-success__payout-sub {
+  font-size: 0.6rem;
+  line-height: 1.3;
+  color: var(--muted);
+  margin: 0 0 0.15rem;
+  word-break: break-word;
+}
+.tf-success__payout .tf-success__fine {
+  margin: 0.25rem 0 0;
+  font-size: 0.58rem;
+  max-width: none;
+}
 .tf-offline__title,
 .tf-success__title {
   font-size: 0.9rem;

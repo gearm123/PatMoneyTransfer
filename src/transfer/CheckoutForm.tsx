@@ -29,7 +29,7 @@ export function CheckoutForm({ onDone, onError }: Props) {
       }
       const piId = paymentIntent?.id;
       if (paymentIntent?.status === "succeeded" && piId) {
-        const r = await completeTransfer(piId);
+        const r = await completeTransfer({ paymentIntentId: piId });
         if (r.ok) onDone(r.transfer);
         else onError("Could not confirm transfer on server");
         return;
