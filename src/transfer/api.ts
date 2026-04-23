@@ -13,12 +13,25 @@ export type Transfer = {
   toCountry: string;
   fromCurrency: string;
   amountSend: number;
+  /** Service fee you take (same currency as amountSend). Omitted if API is older. */
+  platformFee?: number;
+  /** Card is charged this (amountSend + platformFee). */
+  totalCharged?: number;
   thbReceiveEstimate: number;
   fxRateUsed: number;
   sender: { fullName: string; email: string };
   thaiRecipient: { fullName: string; bankCode: string; accountNumber: string };
   paymentIntentId: string | null;
   status: string;
+};
+
+export type QuoteResponse = {
+  thbReceive: number;
+  rate: number;
+  fromCurrency: string;
+  amount: number;
+  platformFee: number;
+  totalCharged: number;
 };
 
 export function getTransferConfig() {
@@ -53,7 +66,7 @@ export function completeTransfer(paymentIntentId: string) {
 }
 
 export function getQuote(amount: number, fromCurrency: string) {
-  return apiFetch<{ thbReceive: number; rate: number }>("/api/transfer/quote", {
+  return apiFetch<QuoteResponse>("/api/transfer/quote", {
     method: "POST",
     body: JSON.stringify({ amount, fromCurrency }),
   });

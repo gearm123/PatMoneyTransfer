@@ -57,7 +57,9 @@ export function CheckoutForm({ onDone, onError }: Props) {
             <div className="pay-processing__bar-track">
               <div className="pay-processing__bar-fill" />
             </div>
-            <p className="pay-processing__message">Confirming with your bank—almost there.</p>
+            <p className="pay-processing__message">
+              You&apos;re about to become another happy buffalo.
+            </p>
           </div>
         )}
       </div>

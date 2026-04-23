@@ -69,6 +69,7 @@ export function TransferApp({ layout = "default" }: TransferAppProps) {
   const [fromCurrency, setFromCurrency] = useState("USD");
   const [amountStr, setAmountStr] = useState("100");
   const [localEst, setLocalEst] = useState<number | null>(null);
+  const [feePreview, setFeePreview] = useState<{ platformFee: number; totalCharged: number } | null>(null);
   const [recipientName, setRecipientName] = useState("");
   const [localBank, setLocalBank] = useState("BBL");
   const [localAccount, setLocalAccount] = useState("");
@@ -107,11 +108,20 @@ export function TransferApp({ layout = "default" }: TransferAppProps) {
     const n = Number.parseFloat(amountStr);
     if (Number.isNaN(n) || n <= 0) {
       setLocalEst(null);
+      setFeePreview(null);
       return;
     }
     void getQuote(n, fromCurrency).then(
-      (q) => setLocalEst(q.thbReceive),
-      () => setLocalEst(null)
+      (q) => {
+        setLocalEst(q.thbReceive);
+        const pf = q.platformFee ?? 0;
+        const tot = q.totalCharged ?? n;
+        setFeePreview({ platformFee: pf, totalCharged: tot });
+      },
+      () => {
+        setLocalEst(null);
+        setFeePreview(null);
+      }
     );
   }, [amountStr, fromCurrency]);
 
@@ -214,17 +224,41 @@ export function TransferApp({ layout = "default" }: TransferAppProps) {
   if (step === 5 && doneTransfer) {
     return (
       <div className="tf-success">
-        <h2 className="tf-success__title">Paid</h2>
+        <div className="tf-success__party" aria-hidden>
+          <span className="tf-success__confetti" />
+        </div>
+        <h2 className="tf-success__welcome">Welcome buffalo</h2>
+        <p className="tf-success__paidline">Payment received</p>
         <h3 className="tf-success__h3">Details</h3>
         <p className="tf-success__body">
-          <span className="mono">{doneTransfer.id}</span> · sent{" "}
-          <span className="mono">
-            {doneTransfer.amountSend} {doneTransfer.fromCurrency}
-          </span>
+          <span className="mono">{doneTransfer.id}</span>
+          {typeof doneTransfer.totalCharged === "number" ? (
+            <>
+              {" "}
+              · charged{" "}
+              <span className="mono">
+                {doneTransfer.totalCharged.toFixed(2)} {doneTransfer.fromCurrency}
+              </span>
+            </>
+          ) : (
+            <>
+              {" "}
+              · sent{" "}
+              <span className="mono">
+                {doneTransfer.amountSend} {doneTransfer.fromCurrency}
+              </span>
+            </>
+          )}
+          {typeof doneTransfer.platformFee === "number" && doneTransfer.platformFee > 0 ? (
+            <span>
+              {" "}
+              (incl. service fee <span className="mono">{doneTransfer.platformFee.toFixed(2)}</span>)
+            </span>
+          ) : null}
           {localCcy ? (
             <>
               {" "}
-              · ≈ <span className="mono">{doneTransfer.thbReceiveEstimate}</span> {localCcy}
+              · ≈ <span className="mono">{doneTransfer.thbReceiveEstimate}</span> {localCcy} est.
             </>
           ) : null}
         </p>
@@ -329,16 +363,42 @@ export function TransferApp({ layout = "default" }: TransferAppProps) {
                     </div>
                   </div>
                 </div>
-                <div className="rate-strip rate-strip--tight">
-                  {localEst != null ? (
-                    <span>
-                      ≈ <strong className="mono">{localEst.toFixed(2)} {localCcy}</strong> to your recipient
-                      {!isHub && (
-                        <span className="rate-strip__foot">
-                          Indicative rate for {destLabel}. Final amount is set at payout.
-                        </span>
+                <div className="rate-strip rate-strip--tight" aria-label="Send amount and fees">
+                  {localEst != null && feePreview != null ? (
+                    <div className="rate-strip__stack">
+                      {feePreview.platformFee > 0 ? (
+                        <>
+                          <div className="rate-strip__row">
+                            <span className="rate-strip__k">Service fee</span>
+                            <span className="mono">
+                              {feePreview.platformFee.toFixed(2)} {fromCurrency}
+                            </span>
+                          </div>
+                          <div className="rate-strip__row rate-strip__row--strong">
+                            <span className="rate-strip__k">Card will charge</span>
+                            <span className="mono">
+                              {feePreview.totalCharged.toFixed(2)} {fromCurrency}
+                            </span>
+                          </div>
+                        </>
+                      ) : (
+                        <div className="rate-strip__row rate-strip__row--strong">
+                          <span className="rate-strip__k">You pay (card)</span>
+                          <span className="mono">
+                            {feePreview.totalCharged.toFixed(2)} {fromCurrency}
+                          </span>
+                        </div>
                       )}
-                    </span>
+                      <div className="rate-strip__row">
+                        <span className="rate-strip__k">Recipient ≈</span>
+                        <strong className="mono">
+                          {localEst.toFixed(2)} {localCcy}
+                        </strong>
+                      </div>
+                      {!isHub && (
+                        <p className="rate-strip__foot">Indicative rate for {destLabel}. Payout in production uses live pricing.</p>
+                      )}
+                    </div>
                   ) : (
                     <span className="rate-strip__empty">Enter an amount to see an estimate in local currency.</span>
                   )}
@@ -467,11 +527,26 @@ export function TransferApp({ layout = "default" }: TransferAppProps) {
             </div>
           )}
 
-          {step === 4 && clientSecret && options && stripePromise && (
+          {step === 4 && clientSecret && options && stripePromise && doneTransfer && (
             <div className="flow-step flow-step--pay" key="step-4">
               <div className="flow-step-lead flow-step-lead--pay">
                 <span className="flow-step-kicker">Secure checkout</span>
                 <h3 className="flow-step-title">Pay with your card</h3>
+                <p className="pay-total" aria-label="Total to charge">
+                  <span className="pay-total__label">Total to charge</span>{" "}
+                  <span className="mono pay-total__value">
+                    {typeof doneTransfer.totalCharged === "number"
+                      ? doneTransfer.totalCharged.toFixed(2)
+                      : doneTransfer.amountSend}{" "}
+                    {doneTransfer.fromCurrency}
+                  </span>
+                  {typeof doneTransfer.platformFee === "number" && doneTransfer.platformFee > 0 ? (
+                    <span className="pay-total__sub">
+                      {" "}
+                      (incl. {doneTransfer.platformFee.toFixed(2)} service fee)
+                    </span>
+                  ) : null}
+                </p>
                 <p className="flow-step-desc">
                   {isHub ? (
                     <>

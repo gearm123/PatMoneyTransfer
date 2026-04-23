@@ -831,6 +831,58 @@ textarea {
   color: var(--navy-2);
   font-size: 1.02em;
 }
+.tf .rate-strip__stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  width: 100%;
+  text-align: left;
+}
+.tf .rate-strip__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem;
+  font-size: 0.72rem;
+  line-height: 1.35;
+  color: var(--ink);
+}
+.tf .rate-strip__row--strong {
+  font-weight: 700;
+  padding-bottom: 0.1rem;
+  border-bottom: 1px solid rgba(30, 58, 95, 0.12);
+  margin-bottom: 0.05rem;
+}
+.tf .rate-strip__k {
+  color: var(--muted);
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.tf .pay-total {
+  margin: 0.15rem 0 0.35rem;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: var(--ink);
+}
+.tf .pay-total__label {
+  font-weight: 700;
+  color: #bae6d4;
+  margin-right: 0.25rem;
+}
+.tf .pay-total__value {
+  font-size: 1.05em;
+  font-weight: 800;
+  color: #f4f1ea;
+}
+.tf .pay-total__sub {
+  display: block;
+  margin-top: 0.15rem;
+  font-size: 0.65rem;
+  font-weight: 500;
+  color: #a8a29e;
+}
 
 .tf .form-hint--compact,
 .tf .form-hint--step2 {
@@ -976,19 +1028,60 @@ textarea {
   font-size: 0.85em;
 }
 
-/* Processing overlay: compact */
+/* Processing overlay: indeterminate bar + community line */
 .tf .pay-processing {
   border-radius: 10px;
-  padding: 0.75rem 0.5rem;
-  gap: 0.4rem;
+  padding: 0.75rem 0.5rem 0.85rem;
+  gap: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  background: linear-gradient(180deg, rgba(30, 58, 95, 0.1) 0%, rgba(30, 58, 95, 0.02) 100%);
+  border: 1px solid rgba(30, 58, 95, 0.12);
 }
 .tf .pay-processing__message {
   font-size: 0.7rem;
   max-width: 100%;
+  line-height: 1.4;
+  font-weight: 600;
+  color: var(--navy-2);
+  margin: 0;
+  text-align: center;
 }
 .tf .pay-processing__bar-track {
   width: 100%;
   max-width: 100%;
+  height: 5px;
+  border-radius: 99px;
+  background: rgba(30, 58, 95, 0.12);
+  overflow: hidden;
+  position: relative;
+}
+.tf .pay-processing__bar-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 42%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, #1e3a5f, #22d3ee);
+  animation: pay-bar-slide 0.9s ease-in-out infinite alternate;
+}
+@media (prefers-reduced-motion: reduce) {
+  .tf .pay-processing__bar-fill {
+    animation: none;
+    left: 0;
+    right: 0;
+    width: auto;
+  }
+}
+@keyframes pay-bar-slide {
+  0% {
+    left: 0;
+  }
+  100% {
+    left: 58%;
+  }
 }
 
 /* Errors */
@@ -1014,6 +1107,60 @@ textarea {
   text-align: center;
   padding: 0.5rem 0.6rem;
   overflow: hidden;
+  position: relative;
+}
+.tf-success {
+  background: linear-gradient(165deg, rgba(236, 253, 245, 0.65) 0%, rgba(255, 255, 255, 0) 45%, #fff 100%);
+  border-radius: 12px;
+}
+.tf-success__party {
+  height: 1.5rem;
+  margin-bottom: 0.15rem;
+}
+.tf-success__confetti {
+  display: block;
+  font-size: 1.4rem;
+  line-height: 1;
+  animation: success-pop 0.6s ease-out;
+}
+.tf-success__confetti::before {
+  content: "🦬";
+  filter: drop-shadow(0 2px 4px rgba(30, 58, 95, 0.15));
+}
+@media (prefers-reduced-motion: reduce) {
+  .tf-success__confetti {
+    animation: none;
+  }
+}
+@keyframes success-pop {
+  0% {
+    transform: scale(0.6);
+    opacity: 0.5;
+  }
+  70% {
+    transform: scale(1.08);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+.tf-success__welcome {
+  font-family: var(--display);
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: #0d4f3c;
+  margin: 0 0 0.2rem;
+  line-height: 1.2;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+.tf-success__paidline {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--navy-2);
+  margin: 0 0 0.4rem;
+  letter-spacing: 0.02em;
 }
 .tf-offline__title,
 .tf-success__title {
