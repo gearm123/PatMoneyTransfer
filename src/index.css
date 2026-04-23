@@ -574,14 +574,23 @@ textarea {
   flex-direction: column;
   flex: 1 1 0;
   min-height: 0;
-  padding: 0.45rem 0.55rem 0.4rem;
+  padding: 0.4rem 0.5rem 0.4rem;
   overflow: hidden;
   gap: 0;
 }
 
 .tf .send-flow-top {
   flex: 0 0 auto;
-  margin-bottom: 0.2rem;
+  margin-bottom: 0.35rem;
+}
+
+.tf .send-flow-top--hub {
+  margin: -0.15rem -0.25rem 0.4rem;
+  padding: 0.45rem 0.35rem 0.5rem;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #f1f5f9 0%, #e8eef5 100%);
+  border: 1px solid rgba(30, 58, 95, 0.1);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.85) inset;
 }
 
 .tf .send-flow-body {
@@ -592,42 +601,130 @@ textarea {
   overflow: hidden;
 }
 
-/* Stepper */
-.tf .step-tracker--compact {
-  display: flex;
-  gap: 0.2rem;
-  margin: 0;
-  flex-wrap: nowrap;
-  align-items: stretch;
+/* Stepper — horizontal progress with bridges */
+.tf .step-tracker {
+  width: 100%;
 }
-.tf .step-pill--compact {
+.tf .step-tracker__list {
+  display: flex;
+  align-items: stretch;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: 0;
+}
+.tf .step-tracker__segment {
+  display: flex;
   flex: 1;
   min-width: 0;
-  padding: 0.2rem 0.1rem 0.22rem;
-  font-size: 0.6rem;
-  border-radius: 8px;
-  line-height: 1.1;
-  background: rgba(21, 34, 56, 0.06);
+  align-items: center;
+  gap: 0;
+}
+.tf .step-tracker__bridge {
+  flex: 0 0 0.45rem;
+  height: 3px;
+  align-self: center;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #cbd5e1, #e2e8f0);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) inset;
+}
+.tf .step-tracker__bridge.is-done {
+  background: linear-gradient(90deg, #22c55e, #4ade80);
+  box-shadow: 0 0 0 1px rgba(22, 101, 52, 0.12);
+}
+.tf .step-pill {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+  min-height: 3.15rem;
+  padding: 0.4rem 0.2rem 0.42rem;
+  border-radius: 10px;
+  line-height: 1.15;
+  text-align: center;
+  background: #fff;
   color: var(--muted);
-  border: 1px solid transparent;
+  border: 1px solid rgba(30, 58, 95, 0.12);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.12s ease;
+}
+.tf .step-pill__num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  font-family: var(--display);
+  letter-spacing: -0.02em;
+  background: rgba(21, 34, 56, 0.08);
+  color: var(--navy-2);
+  border: 1px solid rgba(30, 58, 95, 0.1);
 }
 .tf .step-pill__label {
   display: block;
-  font-size: 0.5rem;
+  font-size: 0.58rem;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
-  margin-top: 0.1rem;
-  opacity: 0.9;
+  letter-spacing: 0.06em;
+  font-weight: 700;
+  line-height: 1.2;
+  hyphens: auto;
 }
-.tf .step-pill--compact.is-active {
+.tf .step-pill.is-todo .step-pill__num {
+  color: var(--muted);
+  background: rgba(21, 34, 56, 0.05);
+}
+.tf .step-pill.is-active {
+  color: var(--navy-2);
+  background: linear-gradient(160deg, #1e3a5f 0%, #152238 100%);
+  border-color: rgba(30, 58, 95, 0.45);
+  box-shadow: 0 4px 14px -4px rgba(21, 34, 56, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+  transform: translateY(-1px);
+}
+.tf .step-pill.is-active .step-pill__num {
+  background: rgba(255, 255, 255, 0.2);
   color: #fff;
-  background: linear-gradient(145deg, var(--navy-2), #152f52);
-  border-color: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.25);
 }
-.tf .step-pill--compact.is-done {
-  color: #0d5a46;
-  background: #e6f4ef;
-  border-color: rgba(13, 90, 70, 0.2);
+.tf .step-pill.is-active .step-pill__label {
+  color: #e0f2ff;
+}
+.tf .step-pill.is-done {
+  background: #ecfdf5;
+  border-color: rgba(16, 185, 129, 0.35);
+  color: #047857;
+}
+.tf .step-pill.is-done .step-pill__num {
+  background: #d1fae5;
+  color: #047857;
+  border-color: rgba(16, 185, 129, 0.35);
+  font-size: 0.65rem;
+}
+.tf .step-pill.is-done .step-pill__label {
+  color: #047857;
+}
+@media (max-width: 380px) {
+  .tf .step-pill {
+    min-height: 2.85rem;
+    padding: 0.32rem 0.12rem 0.35rem;
+  }
+  .tf .step-pill__label {
+    font-size: 0.52rem;
+    letter-spacing: 0.04em;
+  }
+  .tf .step-pill__num {
+    width: 1.35rem;
+    height: 1.35rem;
+    font-size: 0.65rem;
+  }
+  .tf .step-tracker__bridge {
+    flex-basis: 0.28rem;
+  }
 }
 
 /* Steps */
@@ -642,16 +739,16 @@ textarea {
 
 .tf .flow-step-lead {
   flex: 0 0 auto;
-  margin: 0 0 0.2rem;
-  padding: 0 0.1rem 0.15rem;
+  margin: 0 0 0.3rem;
+  padding: 0.15rem 0.15rem 0.4rem;
   border: none;
   border-bottom: 1px solid var(--line);
   border-radius: 0;
 }
 .tf .flow-step-title {
-  font-size: 0.7rem;
+  font-size: 0.72rem;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   color: var(--navy-2);
   font-weight: 800;
   margin: 0;
@@ -673,62 +770,66 @@ textarea {
 }
 
 .tf .flow-fields {
-  padding: 0.35rem 0.4rem 0.4rem;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.8);
-  border: 1px solid var(--line);
+  padding: 0.5rem 0.5rem 0.55rem;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #fff 0%, #f8fafc 100%);
+  border: 1px solid rgba(30, 58, 95, 0.1);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04) inset, 0 1px 3px rgba(15, 23, 42, 0.04);
 }
 
 .tf .field--tight {
-  margin-bottom: 0.32rem;
+  margin-bottom: 0.4rem;
 }
 .tf .field--tight:last-child {
   margin-bottom: 0;
 }
 .tf .field--tight > label {
   display: block;
-  font-size: 0.58rem;
+  font-size: 0.62rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--muted);
-  margin: 0 0 0.2rem;
+  letter-spacing: 0.06em;
+  color: #4b5563;
+  margin: 0 0 0.25rem;
 }
 .tf .field--tight input,
 .tf .field--tight select {
   width: 100%;
   margin: 0;
-  padding: 0.35rem 0.45rem;
-  min-height: 1.9rem;
-  font-size: 0.8rem;
-  border-radius: 8px;
-  border: 1px solid var(--line);
+  padding: 0.45rem 0.5rem;
+  min-height: 2.1rem;
+  font-size: 0.84rem;
+  border-radius: 9px;
+  border: 1px solid rgba(30, 58, 95, 0.14);
   background: #fff;
   color: var(--ink);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 .tf .field--tight input:focus,
 .tf .field--tight select:focus {
   outline: none;
   border-color: var(--navy-2);
-  box-shadow: 0 0 0 2px rgba(30, 58, 95, 0.15);
+  box-shadow: 0 0 0 3px rgba(30, 58, 95, 0.12);
 }
 .tf .field-row--tight {
-  gap: 0.35rem;
+  gap: 0.5rem;
 }
 
 .tf .rate-strip--tight,
 .tf .rate-strip {
-  margin: 0.1rem 0 0;
-  padding: 0.28rem 0.4rem;
-  font-size: 0.7rem;
-  line-height: 1.3;
-  border-radius: 8px;
-  background: rgba(30, 58, 95, 0.07);
-  border: 1px solid rgba(30, 58, 95, 0.12);
+  margin: 0.2rem 0 0;
+  padding: 0.4rem 0.5rem;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  border-radius: 10px;
+  background: linear-gradient(180deg, rgba(30, 58, 95, 0.08) 0%, rgba(30, 58, 95, 0.04) 100%);
+  border: 1px solid rgba(30, 58, 95, 0.14);
   flex: 0 0 auto;
+  color: var(--ink);
 }
 .tf .rate-strip strong {
   color: var(--navy-2);
+  font-size: 1.02em;
 }
 
 .tf .form-hint--compact,
@@ -746,9 +847,9 @@ textarea {
 .tf .flow-step-actions,
 .tf .flow-actions {
   display: flex;
-  gap: 0.35rem;
-  margin: 0.25rem 0 0;
-  padding-top: 0.2rem;
+  gap: 0.4rem;
+  margin: 0.35rem 0 0;
+  padding-top: 0.35rem;
   border-top: 1px solid var(--line);
   flex: 0 0 auto;
 }
@@ -756,9 +857,9 @@ textarea {
 .tf .flow-step-actions .btn {
   flex: 1;
   min-width: 0;
-  min-height: 2rem;
-  padding: 0.35rem 0.5rem;
-  font-size: 0.8rem;
+  min-height: 2.2rem;
+  padding: 0.4rem 0.6rem;
+  font-size: 0.85rem;
   font-weight: 600;
   border-radius: 10px;
   border: none;

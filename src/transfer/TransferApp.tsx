@@ -24,23 +24,33 @@ type Step = 1 | 2 | 3 | 4 | 5;
 
 function StepTracker({ current }: { current: 1 | 2 | 3 | 4 }) {
   return (
-    <div className="step-tracker step-tracker--compact" aria-hidden>
-      {STEP_LABELS.map((label, i) => {
-        const n = (i + 1) as 1 | 2 | 3 | 4;
-        const isActive = n === current;
-        const isDone = n < current;
-        return (
-          <div
-            key={label}
-            className={`step-pill step-pill--compact ${isActive ? "is-active" : ""} ${isDone ? "is-done" : ""}`}
-            title={label}
-          >
-            {isDone ? "✓" : i + 1}
-            <span className="step-pill__label">{label}</span>
-          </div>
-        );
-      })}
-    </div>
+    <nav className="step-tracker" aria-label="Transfer steps">
+      <ol className="step-tracker__list">
+        {STEP_LABELS.map((label, i) => {
+          const n = (i + 1) as 1 | 2 | 3 | 4;
+          const isActive = n === current;
+          const isDone = n < current;
+          const bridgeComplete = i > 0 && current > i;
+          return (
+            <li key={label} className="step-tracker__segment" aria-current={isActive ? "step" : undefined}>
+              {i > 0 ? (
+                <div
+                  className={`step-tracker__bridge ${bridgeComplete ? "is-done" : ""}`}
+                  aria-hidden
+                />
+              ) : null}
+              <div
+                className={`step-pill ${isActive ? "is-active" : ""} ${isDone ? "is-done" : ""} ${!isActive && !isDone ? "is-todo" : ""}`}
+                title={label}
+              >
+                <span className="step-pill__num">{isDone ? "✓" : n}</span>
+                <span className="step-pill__label">{label}</span>
+              </div>
+            </li>
+          );
+        })}
+      </ol>
+    </nav>
   );
 }
 
