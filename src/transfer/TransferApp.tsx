@@ -156,22 +156,36 @@ export function TransferApp() {
 
   if (configOk === false) {
     return (
-      <div className="card-panel config-empty">
-        <p className="send-flow-eyebrow" style={{ marginBottom: "0.35rem" }} translate="no">
-          BuffaloMoneySend
+      <div className="card-panel config-empty config-empty--in-flow">
+        <p className="config-empty__flow-label" role="status">
+          <strong>Payment is not live yet</strong> (developer setup) — the flow below is where card checkout will
+          live once Stripe is connected.
         </p>
-        <h2>Connect payments</h2>
-        <p className="send-flow-motto" style={{ maxWidth: "24rem", marginLeft: "auto", marginRight: "auto" }}>
-          Keys in, herd ready—connect Stripe to try a send.
+        <ol className="config-empty__skeleton" aria-label="The four transfer steps">
+          {(
+            [
+              { n: 1, t: "Amount" },
+              { n: 2, t: "Thailand account" },
+              { n: 3, t: "Your details" },
+              { n: 4, t: "Card pay" },
+            ] as const
+          ).map((s) => (
+            <li key={s.n} className="config-empty__skel-step">
+              <span className="config-empty__skel-num" aria-hidden>
+                {s.n}
+              </span>
+              <span>{s.t}</span>
+            </li>
+          ))}
+        </ol>
+        <h2 className="config-empty__title">Connect Stripe to show card fields</h2>
+        <p className="config-empty__lede">Same panel — after keys, the steps above run for real, ending in card payment.</p>
+        <p className="config-empty__code">
+          <code className="mono">server/.env</code>: <code className="mono">STRIPE_SECRET_KEY=sk_…</code> ·{" "}
+          <code className="mono">.env</code>: <code className="mono">VITE_STRIPE_PUBLISHABLE_KEY=pk_…</code>
         </p>
-        <p className="hero-sub" style={{ maxWidth: "32rem", margin: "0.5rem auto 0" }}>
-          Add <code className="mono">STRIPE_SECRET_KEY</code> in <code className="mono">server/.env</code>{" "}
-          and <code className="mono">VITE_STRIPE_PUBLISHABLE_KEY</code> in the project <code className="mono">.env</code> (from the Stripe
-          dashboard, e.g. pk_test_...).
-        </p>
-        <p className="disclaimer" style={{ marginTop: "1rem" }}>
-          Run the API on port 4000; Vite proxies <code className="mono">/api</code>. (Then you can welcome
-          your first test send to the community.)
+        <p className="config-empty__api">
+          Run the API on port <span className="mono">4000</span> — Vite proxies <code className="mono">/api</code>.
         </p>
       </div>
     );
@@ -263,8 +277,11 @@ export function TransferApp() {
             <div className="flow-step" key="step-1">
               <div className="flow-step-lead">
                 <h3 className="flow-step-title">How much and where</h3>
-                <p className="flow-step-desc">Choose your route, then the amount. You’ll see an estimate in the recipient’s currency before you go on.</p>
-                <p className="flow-step-note">New corridors can join as you grow the product.</p>
+                <p className="flow-step-desc">
+                  You send from your country, your recipient is paid in <strong>Thailand (THB)</strong>. Enter the
+                  amount to see a THB estimate before the next step.
+                </p>
+                <p className="flow-step-note">Thailand is the first corridor in this app—more can follow later.</p>
               </div>
               <div className="flow-step-main">
                 <div className="flow-fields" aria-label="Send amount and route">
