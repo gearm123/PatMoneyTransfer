@@ -1,14 +1,16 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import { resolvedApiBase } from "./api/client";
 import App from "./App";
 import "./index.css";
 
-/* One-line check in production: open DevTools → Console. If empty, Netlify build has no VITE_API_BASE. */
+/* One-line check: DevTools → Console. resolvedApiBase is set in client.ts (env or production default). */
 if (import.meta.env.PROD) {
-  const b = import.meta.env.VITE_API_BASE;
+  const fromEnv = (import.meta.env.VITE_API_BASE as string | undefined)?.trim();
   console.info(
-    "[BuffaloMoneySend] VITE_API_BASE:",
-    b && String(b).length > 0 ? b : "(empty — API calls use this site’s /api; set VITE_API_BASE in Netlify and redeploy)"
+    "[BuffaloMoneySend] API origin:",
+    resolvedApiBase,
+    fromEnv ? `(VITE_API_BASE from env)` : `(VITE_API_BASE unset — using in-bundle default; override in Netlify build env if needed)`
   );
 }
 

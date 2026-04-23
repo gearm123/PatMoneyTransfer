@@ -1,8 +1,17 @@
-/* Origin only, e.g. https://xxx.onrender.com — paths already include /api/... */
-const base = (import.meta.env.VITE_API_BASE ?? "")
-  .trim()
+/**
+ * Vite bakes VITE_API_BASE at build time. If Netlify (or a local `vite build`) runs without
+ * it, a static site would call `/api/...` on the Netlify host and fail — the flow looks
+ * "broken" or stuck on the offline/loading state. `netlify.toml` sets the default below;
+ * override anytime with VITE_API_BASE in the build environment.
+ */
+const DEFAULT_PROD_API = "https://buffalo-money-send-backend.onrender.com";
+const fromEnv = (import.meta.env.VITE_API_BASE as string | undefined)?.trim() ?? "";
+const base = (fromEnv || (import.meta.env.PROD ? DEFAULT_PROD_API : ""))
   .replace(/\/$/, "")
   .replace(/\/api$/i, "");
+
+/** Resolved API origin (empty in dev when using Vite’s `/api` proxy). */
+export const resolvedApiBase = base;
 
 export class ApiError extends Error {
   constructor(
