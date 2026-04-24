@@ -1,5 +1,6 @@
 import type { CSSProperties } from "react";
 import { BuffaloHeroImg } from "./BuffaloHeroImg";
+import { ConstructionBanner } from "./ConstructionBanner";
 import { TransferApp } from "./transfer/TransferApp";
 
 /** Illustrative Stripe card regions (ambient only). */
@@ -101,6 +102,8 @@ export default function App() {
           </p>
         ))}
       </div>
+
+      <ConstructionBanner />
 
       <div className="shell__gearm" role="img" aria-label="Gearm">
         <img

@@ -57,7 +57,7 @@ function thunesPayoutSummary(t: Transfer): { kind: "ok" | "err" | "pending" | "u
 }
 
 function initialConfigState(): {
-  ok: boolean | null;
+  ok: boolean;
   banks: { code: string; name: string }[];
   sourceCountries: { code: string; label: string }[];
 } {
@@ -71,11 +71,11 @@ function initialConfigState(): {
         cached.sourceCountries && cached.sourceCountries.length > 0 ? cached.sourceCountries : FALLBACK_SOURCE_COUNTRIES,
     };
   }
-  // Publishable key present ⇒ assume checkout is available while API cold-starts (Render, etc.)
+  // Show the form immediately; getTransferConfig() runs in useEffect and updates lists / may set ok to false
   if (defaultPk) {
     return { ok: true, banks: [], sourceCountries: FALLBACK_SOURCE_COUNTRIES };
   }
-  return { ok: null, banks: [], sourceCountries: FALLBACK_SOURCE_COUNTRIES };
+  return { ok: true, banks: [], sourceCountries: FALLBACK_SOURCE_COUNTRIES };
 }
 
 type Step = 1 | 2 | 3 | 4 | 5;
@@ -119,7 +119,7 @@ type TransferAppProps = {
 
 export function TransferApp({ layout = "default" }: TransferAppProps) {
   const isHub = layout === "hub";
-  const [configOk, setConfigOk] = useState<boolean | null>(() => initialConfigState().ok);
+  const [configOk, setConfigOk] = useState<boolean>(() => initialConfigState().ok);
   const [bankList, setBankList] = useState<{ code: string; name: string }[]>(() => initialConfigState().banks);
   const [sourceCountries, setSourceCountries] = useState<{ code: string; label: string }[]>(
     () => initialConfigState().sourceCountries
@@ -369,10 +369,6 @@ export function TransferApp({ layout = "default" }: TransferAppProps) {
         </details>
       </div>
     );
-  }
-
-  if (configOk === null) {
-    return <div className="tf-loading">{isHub ? "Preparing…" : "Loading…"}</div>;
   }
 
   if (thunesCompleting) {
