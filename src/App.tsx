@@ -130,18 +130,15 @@ export default function App() {
       </header>
 
       <div className="shell__work">
-        <div className="shell__work-row">
-          <ConstructionBanner />
-          <div className="shell__work-stage">
-            <main className="shell__main" id="main" aria-label="Payment">
-              <TransferApp layout="hub" />
-            </main>
-            <p className="shell__legal" translate="no">
-              BuffaloMoneySend
-            </p>
-          </div>
-        </div>
+        <main className="shell__main" id="main" aria-label="Payment">
+          <TransferApp layout="hub" />
+        </main>
+        <p className="shell__legal" translate="no">
+          BuffaloMoneySend
+        </p>
       </div>
+
+      <ConstructionBanner />
     </div>
   );
 }

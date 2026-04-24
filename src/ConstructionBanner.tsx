@@ -19,8 +19,12 @@ export function ConstructionBanner() {
           />
         </span>
         <p className="shell__uc-copy">
-          <span className="shell__uc-line shell__uc-title">Under construction</span>
-          <span className="shell__uc-line shell__uc-sub">Coming soon</span>
+          <span className="shell__uc-title">Under construction</span>
+          <span className="shell__uc-sep" aria-hidden>
+            {" "}
+            ·{" "}
+          </span>
+          <span className="shell__uc-sub">Coming soon</span>
         </p>
       </div>
     </aside>
