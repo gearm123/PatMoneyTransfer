@@ -1,5 +1,6 @@
 /**
- * GA4 (gtag) — only loads when VITE_GA_MEASUREMENT_ID is set (e.g. in Netlify).
+ * GA4 (gtag) — only loads when `VITE_GA_MEASUREMENT_ID` is set at **build** time (e.g. Netlify env).
+ * Requests appear as `google-analytics.com/.../collect` (filter "collect" in Network). Ad blockers hide them.
  */
 const MEASUREMENT_ID = (import.meta.env.VITE_GA_MEASUREMENT_ID as string | undefined)?.trim();
 
@@ -14,13 +15,22 @@ let initialized = false;
 
 export function initGoogleAnalytics(): void {
   if (initialized) return;
-  if (!MEASUREMENT_ID) return;
-  if (import.meta.env.DEV) return;
 
+  if (!MEASUREMENT_ID) {
+    if (import.meta.env.PROD) {
+      // eslint-disable-next-line no-console
+      console.warn(
+        "[BuffaloMoneySend] GA4 is not configured: set VITE_GA_MEASUREMENT_ID in Netlify (or .env) and redeploy / rebuild. No /collect requests will be sent."
+      );
+    }
+    return;
+  }
+
+  // Match Google’s snippet: queue calls, then load gtag.js (async) — it processes dataLayer on load
   window.dataLayer = window.dataLayer ?? [];
-  // https://developers.google.com/tag-platform/gtagjs — `dataLayer.push(arguments)`
+  // https://developers.google.com/tag-platform/gtagjs — must push `arguments` (not a rest array)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const gtag: any = function () {
+  const gtag: any = function gtag() {
     (window as any).dataLayer.push(arguments);
   };
   window.gtag = gtag;
@@ -36,7 +46,7 @@ export function initGoogleAnalytics(): void {
 }
 
 export function analyticsEvent(action: string, params?: Record<string, unknown>): void {
-  if (!MEASUREMENT_ID || !import.meta.env.PROD) return;
+  if (!MEASUREMENT_ID) return;
   const g = window.gtag;
   if (typeof g !== "function") return;
   (g as (cmd: "event", a: string, p?: Record<string, unknown>) => void)("event", action, params);
