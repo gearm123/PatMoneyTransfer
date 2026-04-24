@@ -97,7 +97,7 @@ textarea {
   z-index: 2;
   flex: 0 0 auto;
   margin: 0 -0.75rem 0.35rem;
-  padding: 0.45rem 0.75rem 0.5rem;
+  padding: 0.5rem 0.75rem 0.6rem;
   border-radius: 0 0 14px 14px;
   overflow: hidden;
   background: linear-gradient(
@@ -143,7 +143,7 @@ textarea {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.55rem;
+  gap: 0.65rem;
   flex-wrap: wrap;
 }
 .shell__uc-icon {
@@ -151,17 +151,25 @@ textarea {
   align-items: center;
   justify-content: center;
   line-height: 0;
-  filter: drop-shadow(0 0 10px rgba(34, 211, 238, 0.35)) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
   flex-shrink: 0;
 }
+/* Was 30px hammer; asset reads larger on the bar (clamped for narrow screens) */
+.shell__uc-sign {
+  display: block;
+  width: min(5.5rem, 48vw);
+  max-width: 5.75rem;
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 0 12px rgba(34, 211, 238, 0.4)) drop-shadow(0 3px 8px rgba(0, 0, 0, 0.45));
+}
 @media (prefers-reduced-motion: no-preference) {
-  .shell__uc-hammer {
-    animation: shell-uc-tap 2.2s ease-in-out infinite;
-    transform-origin: 60% 80%;
+  .shell__uc-sign {
+    animation: shell-uc-tap 2.4s ease-in-out infinite;
+    transform-origin: 50% 55%;
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .shell__uc-hammer {
+  .shell__uc-sign {
     animation: none;
   }
 }
@@ -203,7 +211,8 @@ textarea {
 }
 
 .shell:has(.shell__uc) .shell__gearm {
-  top: calc(max(0.4rem, env(safe-area-inset-top, 0px) + 0.2rem) + 2.75rem);
+  /* Diamond sign is taller than the old icon; keep logo below the bar */
+  top: calc(max(0.4rem, env(safe-area-inset-top, 0px) + 0.2rem) + 5.1rem);
 }
 
 .shell__bg {
