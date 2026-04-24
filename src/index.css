@@ -100,10 +100,10 @@ textarea {
   top: 38%;
   left: auto;
   transform: translateY(-50%);
-  width: min(4.9rem, 32vw);
+  width: min(6.75rem, 42vw);
   min-width: 0;
   margin: 0;
-  padding: 0.4rem 0.38rem 0.42rem;
+  padding: 0.45rem 0.42rem 0.48rem;
   border-radius: 12px;
   overflow: hidden;
   background: linear-gradient(
@@ -119,8 +119,8 @@ textarea {
 @media (min-width: 520px) {
   .shell__uc {
     right: auto;
-    /* Left gutter beside the centered 440px column (half of 27.5rem) */
-    left: max(0.4rem, calc(50% - 19.5rem));
+    /* Left gutter beside the centered 440px column; offset accounts for wider card */
+    left: max(0.4rem, calc(50% - 21rem));
   }
 }
 .shell__uc-sheen {
@@ -163,7 +163,7 @@ textarea {
 .shell__uc-sign {
   display: block;
   width: 100%;
-  max-width: 3.25rem;
+  max-width: 4.75rem;
   height: auto;
   margin: 0 auto;
   object-fit: contain;
@@ -192,9 +192,9 @@ textarea {
 .shell__uc-copy {
   margin: 0;
   text-align: center;
-  line-height: 1.2;
+  line-height: 1.25;
   font-family: var(--display);
-  font-size: 0.56rem;
+  font-size: 0.62rem;
   font-weight: 700;
   letter-spacing: 0.01em;
   color: #e0f2ff;
@@ -215,7 +215,7 @@ textarea {
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  font-size: 0.54rem;
+  font-size: 0.6rem;
 }
 
 .shell__bg {
