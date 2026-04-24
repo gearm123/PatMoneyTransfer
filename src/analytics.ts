@@ -40,6 +40,18 @@ export function initGoogleAnalytics(): void {
   const s = document.createElement("script");
   s.async = true;
   s.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(MEASUREMENT_ID)}`;
+  s.addEventListener("load", () => {
+    // If you see this but still no "collect" requests, an ad/tracking blocker is likely the cause (try incognito, extensions off).
+    // eslint-disable-next-line no-console
+    console.info(
+      "[BuffaloMoneySend] GA4: gtag.js loaded; stream",
+      `…${MEASUREMENT_ID.replace(/^G-/, "").slice(-4)}`
+    );
+  });
+  s.addEventListener("error", () => {
+    // eslint-disable-next-line no-console
+    console.error("[BuffaloMoneySend] GA4: gtag.js failed to load (network, CSP, or blocked).");
+  });
   document.head.appendChild(s);
 
   initialized = true;
