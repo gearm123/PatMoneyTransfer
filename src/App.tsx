@@ -103,8 +103,6 @@ export default function App() {
         ))}
       </div>
 
-      <ConstructionBanner />
-
       <div className="shell__gearm" role="img" aria-label="Gearm">
         <img
           className="shell__gearm-img"
@@ -132,12 +130,17 @@ export default function App() {
       </header>
 
       <div className="shell__work">
-        <main className="shell__main" id="main" aria-label="Payment">
-          <TransferApp layout="hub" />
-        </main>
-        <p className="shell__legal" translate="no">
-          BuffaloMoneySend
-        </p>
+        <div className="shell__work-row">
+          <ConstructionBanner />
+          <div className="shell__work-stage">
+            <main className="shell__main" id="main" aria-label="Payment">
+              <TransferApp layout="hub" />
+            </main>
+            <p className="shell__legal" translate="no">
+              BuffaloMoneySend
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );
