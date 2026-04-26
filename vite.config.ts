@@ -2,6 +2,7 @@ import { writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import react from "@vitejs/plugin-react";
 import { type Plugin, defineConfig, loadEnv } from "vite";
+import { SITEMAP_PATHS } from "./src/seo/sitemapData";
 
 /**
  * Injects the public site origin into `index.html` and writes `sitemap.xml` and `robots.txt` to `outDir` at build time.
@@ -21,14 +22,16 @@ function seoPlugin(siteUrl: string): Plugin {
     },
     closeBundle() {
       const out = resolve(process.cwd(), outDir);
-      const home = `${base}/`;
       const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>${home}</loc>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
-  </url>
+${SITEMAP_PATHS.map((e) => {
+  const loc = e.path === "/" ? `${base}/` : `${base}${e.path}`;
+  return `  <url>
+    <loc>${loc}</loc>
+    <changefreq>${e.changefreq}</changefreq>
+    <priority>${e.priority.toFixed(2)}</priority>
+  </url>`;
+}).join("\n")}
 </urlset>
 `;
       const robots = `User-agent: *

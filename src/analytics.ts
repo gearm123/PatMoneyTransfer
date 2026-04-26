@@ -63,3 +63,14 @@ export function analyticsEvent(action: string, params?: Record<string, unknown>)
   if (typeof g !== "function") return;
   (g as (cmd: "event", a: string, p?: Record<string, unknown>) => void)("event", action, params);
 }
+
+/** Call after each client-side route change so GA4 records a page view on guides/FAQ, not only the first load. */
+export function sendGtagPageView(path: string, title: string | undefined): void {
+  if (!MEASUREMENT_ID) return;
+  const g = window.gtag;
+  if (typeof g !== "function") return;
+  (g as (cmd: "event", a: string, p?: Record<string, unknown>) => void)("event", "page_view", {
+    page_path: path,
+    page_title: title ?? path,
+  });
+}
