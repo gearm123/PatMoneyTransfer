@@ -619,25 +619,21 @@ textarea {
   }
 }
 
-/* Gearm: frosted plate on dark fintech bg */
-.shell__gearm {
-  position: fixed;
-  z-index: 3;
-  top: max(0.9rem, calc(env(safe-area-inset-top, 0px) + 0.5rem));
-  left: max(0.9rem, calc(env(safe-area-inset-left, 0px) + 0.5rem));
+/* Top-left brand and memorial note */
+.shell__corner {
+  position: relative;
+  z-index: 2;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 0.35rem;
-  max-width: min(12rem, 52vw);
+  gap: 0.28rem;
+  align-self: flex-start;
+  max-width: min(10.5rem, 46vw);
+  margin: max(0.65rem, env(safe-area-inset-top, 0px) + 0.35rem) 0 0.2rem;
   line-height: 1.35;
-  padding: 0.45rem 0.55rem 0.5rem;
-  border-radius: 14px;
-  background: linear-gradient(160deg, rgba(20, 35, 70, 0.5), rgba(8, 14, 32, 0.3));
-  box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.12) inset, 0 0 0 1px rgba(0, 0, 0, 0.36), 0 10px 24px -12px rgba(0, 0, 0, 0.62);
+}
+.shell__gearm {
   pointer-events: none;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
 }
 .shell__gearm-img {
   display: block;
@@ -650,17 +646,19 @@ textarea {
 }
 .shell__gearm-note {
   margin: 0;
-  font-size: 0.66rem;
+  padding-left: 0.08rem;
+  font-size: 0.62rem;
   font-weight: 500;
   letter-spacing: 0.01em;
-  color: rgba(224, 242, 255, 0.82);
-  text-wrap: balance;
-  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.4);
+  color: rgba(224, 242, 255, 0.76);
+  text-wrap: pretty;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.38);
 }
 .shell__gearm-note-line {
   display: block;
-  margin-top: 0.08rem;
-  color: rgba(186, 230, 253, 0.96);
+  margin-top: 0.12rem;
+  color: rgba(186, 230, 253, 0.92);
+  font-weight: 650;
 }
 
 .shell__hero,

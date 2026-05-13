@@ -120,15 +120,17 @@ export default function HomePage() {
           ))}
         </div>
 
-        <div className="shell__gearm" role="img" aria-label="Gearm">
-          <img
-            className="shell__gearm-img"
-            src="/gearm-logo.png"
-            alt=""
-            width={180}
-            height={72}
-            decoding="async"
-          />
+        <div className="shell__corner">
+          <div className="shell__gearm" role="img" aria-label="Gearm">
+            <img
+              className="shell__gearm-img"
+              src="/gearm-logo.png"
+              alt=""
+              width={180}
+              height={72}
+              decoding="async"
+            />
+          </div>
           <p className="shell__gearm-note">
             this website is dedicated to Sasithon Wangyangnok
             <span className="shell__gearm-note-line">she will never be forgotten</span>
