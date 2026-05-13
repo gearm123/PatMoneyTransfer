@@ -648,23 +648,33 @@ textarea {
   z-index: 3;
   top: max(1rem, calc(env(safe-area-inset-top, 0px) + 0.65rem));
   right: max(1rem, calc(env(safe-area-inset-right, 0px) + 0.65rem));
-  max-width: min(16rem, 42vw);
+  max-width: min(19rem, 50vw);
   margin: 0;
+  padding: 0.48rem 0.7rem 0.54rem;
+  border-radius: 14px;
+  background: linear-gradient(160deg, rgba(20, 35, 70, 0.62), rgba(8, 14, 32, 0.5));
+  box-shadow: 0 0 0 1px rgba(186, 230, 253, 0.12) inset, 0 8px 22px -10px rgba(0, 0, 0, 0.62);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   font-family: var(--display);
-  font-size: clamp(0.68rem, 1.8vw, 0.88rem);
+  font-size: clamp(0.62rem, 1.45vw, 0.8rem);
   font-style: italic;
   font-weight: 600;
   letter-spacing: 0.01em;
-  line-height: 1.3;
+  line-height: 1.25;
   color: rgba(232, 243, 255, 0.9);
   text-wrap: pretty;
   text-align: right;
   text-shadow: 0 1px 10px rgba(0, 0, 0, 0.45);
   pointer-events: none;
 }
+.shell__memorial-note-intro {
+  display: block;
+  white-space: nowrap;
+}
 .shell__memorial-note-line {
   display: block;
-  margin-top: 0.16rem;
+  margin-top: 0.12rem;
   color: rgba(191, 219, 254, 0.98);
   font-style: normal;
   font-weight: 700;

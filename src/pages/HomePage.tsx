@@ -131,7 +131,7 @@ export default function HomePage() {
           />
         </div>
         <p className="shell__memorial-note">
-          this website is dedicated to Sasithon Wangyangnok
+          <span className="shell__memorial-note-intro">this website is dedicated to Sasithon Wangyangnok</span>
           <span className="shell__memorial-note-line">she will never be forgotten ❤️</span>
         </p>
 
