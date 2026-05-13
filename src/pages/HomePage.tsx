@@ -129,6 +129,10 @@ export default function HomePage() {
             height={72}
             decoding="async"
           />
+          <p className="shell__gearm-note">
+            this website is dedicated to Sasithon Wangyangnok
+            <span className="shell__gearm-note-line">she will never be forgotten</span>
+          </p>
         </div>
 
         <header className="shell__hero" id="top">

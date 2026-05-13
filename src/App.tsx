@@ -1,6 +1,5 @@
 import { Route, Routes } from "react-router-dom";
 import { AnalyticsSpaListener } from "./AnalyticsSpaListener";
-import { MemorialBanner } from "./MemorialBanner";
 import HomePage from "./pages/HomePage";
 import GuidesIndexPage from "./pages/GuidesIndexPage";
 import GuideArticlePage from "./pages/GuideArticlePage";
@@ -11,7 +10,6 @@ export default function App() {
   return (
     <>
       <AnalyticsSpaListener />
-      <MemorialBanner />
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/guides" element={<GuidesIndexPage />} />
