@@ -1,8 +1,22 @@
 import { useEffect, useState } from "react";
 import { recordReferral } from "../transfer/api";
 
-const INITIAL_REFERRAL_OPTIONS = ["Gearm"] as const;
+const INITIAL_REFERRAL_OPTIONS = [
+  "Maprang",
+  "JJ",
+  "Hanoy",
+  "Jessie",
+  "Sarinya",
+  "Patty Prosuwan",
+  "Kofi",
+  "Gift",
+  "Bella",
+  "Manaya Empty",
+  "Jame lyon",
+] as const;
 const DEFAULT_REFERRER_LABEL = "Select a referrer";
+const JOKE_REFERRER_NAME = "Jame lyon";
+const JOKE_REFERRER_TOAST = "Just Kidding big boys only";
 
 export function ReferrerWidget() {
   const [referralName, setReferralName] = useState("");
@@ -19,6 +33,11 @@ export function ReferrerWidget() {
 
   const sendReferral = async () => {
     if (!referralName) return;
+    if (referralName === JOKE_REFERRER_NAME) {
+      setErrorNotice(null);
+      setSuccessToast(JOKE_REFERRER_TOAST);
+      return;
+    }
     setSending(true);
     setErrorNotice(null);
     try {
