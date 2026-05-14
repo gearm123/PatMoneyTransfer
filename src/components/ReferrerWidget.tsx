@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { recordReferral } from "../transfer/api";
 
 const INITIAL_REFERRAL_OPTIONS = ["Gearm"] as const;
@@ -8,23 +8,24 @@ export function ReferrerWidget() {
   const [referralName, setReferralName] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [sending, setSending] = useState(false);
-  const [notice, setNotice] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
+  const [errorNotice, setErrorNotice] = useState<string | null>(null);
+  const [successToast, setSuccessToast] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!successToast) return;
+    const timeoutId = window.setTimeout(() => setSuccessToast(null), 2200);
+    return () => window.clearTimeout(timeoutId);
+  }, [successToast]);
 
   const sendReferral = async () => {
     if (!referralName) return;
     setSending(true);
-    setNotice(null);
+    setErrorNotice(null);
     try {
       const result = await recordReferral(referralName);
-      setNotice({
-        kind: "ok",
-        text: `${result.referral.name} saved. Count is now ${result.referral.value}.`,
-      });
+      setSuccessToast(`${result.referral.name} sent successfully.`);
     } catch (e) {
-      setNotice({
-        kind: "err",
-        text: e instanceof Error ? e.message : "Could not record referral",
-      });
+      setErrorNotice(e instanceof Error ? e.message : "Could not record referral");
     } finally {
       setSending(false);
     }
@@ -58,7 +59,7 @@ export function ReferrerWidget() {
                 aria-selected={name === referralName}
                 onClick={() => {
                   setReferralName(name);
-                  setNotice(null);
+                  setErrorNotice(null);
                   setIsOpen(false);
                 }}
               >
@@ -71,10 +72,15 @@ export function ReferrerWidget() {
       <button type="button" className="home-referrer__button" onClick={() => void sendReferral()} disabled={!referralName || sending}>
         {sending ? "Sending..." : "Send"}
       </button>
-      {notice ? (
-        <p className={`home-referrer__status home-referrer__status--${notice.kind}`} role="status">
-          {notice.text}
+      {errorNotice ? (
+        <p className="home-referrer__status home-referrer__status--err" role="alert">
+          {errorNotice}
         </p>
+      ) : null}
+      {successToast ? (
+        <div className="home-referrer__toast" role="status" aria-live="polite">
+          {successToast}
+        </div>
       ) : null}
     </aside>
   );

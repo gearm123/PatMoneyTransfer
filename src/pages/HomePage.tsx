@@ -149,7 +149,13 @@ export default function HomePage() {
             Buffalo<span className="shell__name-accent">Money</span>Send
           </p>
           <h1 className="shell__h1">Send to Thailand in THB</h1>
-          <nav className="shell__landing-nav" aria-label="Guides and help">
+        </header>
+
+        <div className="shell__work">
+          <main className="shell__main" id="main" aria-label="Payment">
+            <TransferApp layout="hub" />
+          </main>
+          <nav className="shell__landing-nav shell__landing-nav--below" aria-label="Guides and help">
             <Link to="/guides" className="shell__landing-link">
               Money send &amp; guides
             </Link>
@@ -160,12 +166,6 @@ export default function HomePage() {
               FAQ
             </Link>
           </nav>
-        </header>
-
-        <div className="shell__work">
-          <main className="shell__main" id="main" aria-label="Payment">
-            <TransferApp layout="hub" />
-          </main>
           <p className="shell__legal" translate="no">
             BuffaloMoneySend
           </p>

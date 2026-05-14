@@ -693,7 +693,7 @@ textarea {
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 0.2rem 0 0.35rem;
+  padding: 0.1rem 0 0.15rem;
 }
 
 .shell__buffalo {
@@ -920,11 +920,25 @@ textarea {
   font-size: 0.7rem;
   line-height: 1.35;
 }
-.home-referrer__status--ok {
-  color: #a7f3d0;
-}
 .home-referrer__status--err {
   color: #fecaca;
+}
+.home-referrer__toast {
+  position: fixed;
+  left: 50%;
+  bottom: max(1rem, calc(env(safe-area-inset-bottom, 0px) + 1rem));
+  transform: translateX(-50%);
+  z-index: 6;
+  padding: 0.5rem 0.75rem;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.94);
+  color: #dcfce7;
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1.2;
+  box-shadow: 0 10px 24px -14px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(34, 197, 94, 0.2) inset;
+  white-space: nowrap;
+  pointer-events: none;
 }
 @media (min-width: 860px) {
   .home-referrer {
@@ -939,6 +953,11 @@ textarea {
   .home-referrer {
     width: min(10.5rem, calc(100vw - 1.5rem));
     padding: 0.72rem;
+  }
+  .home-referrer__toast {
+    max-width: calc(100vw - 1.5rem);
+    white-space: normal;
+    text-align: center;
   }
 }
 
@@ -1993,6 +2012,11 @@ textarea {
   gap: 0.35rem 0.5rem;
   margin: 0.4rem 0 0;
   padding: 0 0.5rem;
+}
+.shell__landing-nav--below {
+  flex: 0 0 auto;
+  margin: 0.35rem 0 0;
+  padding: 0 0.35rem;
 }
 .shell__landing-link {
   font-family: var(--font);
