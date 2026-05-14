@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { recordReferral } from "../transfer/api";
 
 const INITIAL_REFERRAL_OPTIONS = [
-  "Maprang",
   "JJ",
   "Jame lyon",
   "Hanoy",
