@@ -875,7 +875,8 @@ textarea {
   flex-direction: column;
   gap: 0;
   padding: 0;
-  max-height: min(18rem, calc(100vh - 12rem));
+  height: 12.5rem;
+  max-height: 12.5rem;
   border-radius: 10px;
   background: rgba(255, 255, 255, 0.96);
   border: 1px solid rgba(186, 230, 253, 0.22);

@@ -4,6 +4,7 @@ import { recordReferral } from "../transfer/api";
 const INITIAL_REFERRAL_OPTIONS = [
   "Maprang",
   "JJ",
+  "Jame lyon",
   "Hanoy",
   "Jessie",
   "Sarinya",
@@ -12,7 +13,7 @@ const INITIAL_REFERRAL_OPTIONS = [
   "Gift",
   "Bella",
   "Manaya Empty",
-  "Jame lyon",
+  "saowalak",
 ] as const;
 const DEFAULT_REFERRER_LABEL = "Select a referrer";
 const JOKE_REFERRER_NAME = "Jame lyon";
