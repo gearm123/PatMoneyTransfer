@@ -875,10 +875,14 @@ textarea {
   flex-direction: column;
   gap: 0;
   padding: 0;
+  max-height: min(18rem, calc(100vh - 12rem));
   border-radius: 10px;
   background: rgba(255, 255, 255, 0.96);
   border: 1px solid rgba(186, 230, 253, 0.22);
   overflow: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
 }
 .home-referrer__option {
   width: 100%;
