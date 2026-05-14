@@ -26,7 +26,8 @@ const FALLBACK_SOURCE_COUNTRIES = [
 const CCY = ["USD", "EUR", "GBP"] as const;
 const DESTINATIONS = [{ code: "THA", label: "Thailand", sub: "THB" }] as const;
 // Replace these placeholder options with the real referral names when you have them.
-const INITIAL_REFERRAL_OPTIONS = ["Referral One", "Referral Two", "Referral Three"] as const;
+const INITIAL_REFERRAL_OPTIONS = ["Gearm"] as const;
+const REFERRAL_OPTIONS = INITIAL_REFERRAL_OPTIONS.length > 0 ? INITIAL_REFERRAL_OPTIONS : (["Gearm"] as const);
 
 const STEP_LABELS = ["Amount", "Recipient", "Your details", "Pay"] as const;
 
@@ -139,7 +140,7 @@ export function TransferApp({ layout = "default" }: TransferAppProps) {
   const [localAccount, setLocalAccount] = useState("");
   const [senderName, setSenderName] = useState("");
   const [senderEmail, setSenderEmail] = useState("");
-  const [referralName, setReferralName] = useState("");
+  const [referralName, setReferralName] = useState<string>(REFERRAL_OPTIONS[0] ?? "Gearm");
   const [referralSending, setReferralSending] = useState(false);
   const [referralNotice, setReferralNotice] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
 
@@ -763,8 +764,7 @@ export function TransferApp({ layout = "default" }: TransferAppProps) {
                             setReferralNotice(null);
                           }}
                         >
-                          <option value="">Choose a referrer</option>
-                          {INITIAL_REFERRAL_OPTIONS.map((name) => (
+                          {REFERRAL_OPTIONS.map((name) => (
                             <option key={name} value={name}>
                               {name}
                             </option>
