@@ -1066,6 +1066,78 @@ textarea {
 .tf .field-row--tight {
   gap: 0.5rem;
 }
+.tf .field-split {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.tf .field-split__main {
+  margin-bottom: 0;
+}
+.tf .referral-panel {
+  padding: 0.5rem;
+  border-radius: 10px;
+  border: 1px solid rgba(30, 58, 95, 0.1);
+  background: linear-gradient(180deg, rgba(30, 58, 95, 0.05) 0%, rgba(30, 58, 95, 0.02) 100%);
+}
+.tf .referral-panel > label {
+  display: block;
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #4b5563;
+  margin: 0 0 0.25rem;
+}
+.tf .referral-panel__controls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+.tf .referral-panel__controls select {
+  width: 100%;
+  margin: 0;
+  padding: 0.45rem 0.5rem;
+  min-height: 2.1rem;
+  font-size: 0.84rem;
+  border-radius: 9px;
+  border: 1px solid rgba(30, 58, 95, 0.14);
+  background: #fff;
+  color: var(--ink);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.tf .referral-panel__controls select:focus {
+  outline: none;
+  border-color: var(--navy-2);
+  box-shadow: 0 0 0 3px rgba(30, 58, 95, 0.12);
+}
+.tf .referral-panel__button {
+  width: 100%;
+  min-height: 2.1rem;
+}
+.tf .referral-panel__status {
+  margin: 0.4rem 0 0;
+  font-size: 0.72rem;
+  line-height: 1.35;
+}
+.tf .referral-panel__status--ok {
+  color: #166534;
+}
+.tf .referral-panel__status--err {
+  color: #b91c1c;
+}
+@media (min-width: 720px) {
+  .tf .field-split {
+    flex-direction: row;
+    align-items: flex-end;
+  }
+  .tf .field-split__main {
+    flex: 1 1 0;
+  }
+  .tf .referral-panel {
+    flex: 0 0 15rem;
+  }
+}
 
 .tf .rate-strip--tight,
 .tf .rate-strip {

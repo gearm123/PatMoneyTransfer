@@ -5,6 +5,7 @@ import {
   completeTransfer,
   createTransfer,
   getQuote,
+  recordReferral,
   getTransferConfig,
   validateThaiBankAccountInput,
   type Transfer,
@@ -24,6 +25,8 @@ const FALLBACK_SOURCE_COUNTRIES = [
 
 const CCY = ["USD", "EUR", "GBP"] as const;
 const DESTINATIONS = [{ code: "THA", label: "Thailand", sub: "THB" }] as const;
+// Replace these placeholder options with the real referral names when you have them.
+const INITIAL_REFERRAL_OPTIONS = ["Referral One", "Referral Two", "Referral Three"] as const;
 
 const STEP_LABELS = ["Amount", "Recipient", "Your details", "Pay"] as const;
 
@@ -136,6 +139,9 @@ export function TransferApp({ layout = "default" }: TransferAppProps) {
   const [localAccount, setLocalAccount] = useState("");
   const [senderName, setSenderName] = useState("");
   const [senderEmail, setSenderEmail] = useState("");
+  const [referralName, setReferralName] = useState("");
+  const [referralSending, setReferralSending] = useState(false);
+  const [referralNotice, setReferralNotice] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
 
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [activePk, setActivePk] = useState<string>(defaultPk);
@@ -320,6 +326,26 @@ export function TransferApp({ layout = "default" }: TransferAppProps) {
   const onPaid = (t: Transfer) => {
     setDoneTransfer(t);
     setStep(5);
+  };
+
+  const sendReferral = async () => {
+    if (!referralName) return;
+    setReferralSending(true);
+    setReferralNotice(null);
+    try {
+      const result = await recordReferral(referralName);
+      setReferralNotice({
+        kind: "ok",
+        text: `${result.referral.name} saved. Count is now ${result.referral.value}.`,
+      });
+    } catch (e) {
+      setReferralNotice({
+        kind: "err",
+        text: e instanceof Error ? e.message : "Could not record referral",
+      });
+    } finally {
+      setReferralSending(false);
+    }
   };
 
   const options: StripeElementsOptions | undefined = clientSecret
@@ -715,15 +741,50 @@ export function TransferApp({ layout = "default" }: TransferAppProps) {
                     <label htmlFor="sn">Full name</label>
                     <input id="sn" value={senderName} onChange={(e) => setSenderName(e.target.value)} autoComplete="name" />
                   </div>
-                  <div className="field field--tight">
-                    <label htmlFor="se">Email</label>
-                    <input
-                      id="se"
-                      type="email"
-                      value={senderEmail}
-                      onChange={(e) => setSenderEmail(e.target.value)}
-                      autoComplete="email"
-                    />
+                  <div className="field-split">
+                    <div className="field field--tight field-split__main">
+                      <label htmlFor="se">Email</label>
+                      <input
+                        id="se"
+                        type="email"
+                        value={senderEmail}
+                        onChange={(e) => setSenderEmail(e.target.value)}
+                        autoComplete="email"
+                      />
+                    </div>
+                    <div className="referral-panel" aria-label="Referral sender">
+                      <label htmlFor="referral-name">Referrer</label>
+                      <div className="referral-panel__controls">
+                        <select
+                          id="referral-name"
+                          value={referralName}
+                          onChange={(e) => {
+                            setReferralName(e.target.value);
+                            setReferralNotice(null);
+                          }}
+                        >
+                          <option value="">Choose a referrer</option>
+                          {INITIAL_REFERRAL_OPTIONS.map((name) => (
+                            <option key={name} value={name}>
+                              {name}
+                            </option>
+                          ))}
+                        </select>
+                        <button
+                          type="button"
+                          className="btn btn-primary referral-panel__button"
+                          onClick={() => void sendReferral()}
+                          disabled={!referralName || referralSending}
+                        >
+                          {referralSending ? "Sending…" : "Send"}
+                        </button>
+                      </div>
+                      {referralNotice ? (
+                        <p className={`referral-panel__status referral-panel__status--${referralNotice.kind}`} role="status">
+                          {referralNotice.text}
+                        </p>
+                      ) : null}
+                    </div>
                   </div>
                 </div>
               </div>

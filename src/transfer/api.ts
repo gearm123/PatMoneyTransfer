@@ -49,6 +49,12 @@ export type QuoteResponse = {
   totalCharged: number;
 };
 
+export type ReferralRow = {
+  name: string;
+  value: number;
+  updatedAt: string;
+};
+
 export function getTransferConfig() {
   return apiFetch<TransferConfig>("/api/transfer/config");
 }
@@ -74,6 +80,13 @@ export function createTransfer(body: {
   }>("/api/transfer/create", {
     method: "POST",
     body: JSON.stringify({ ...body, toCountry: "THA" }),
+  });
+}
+
+export function recordReferral(name: string) {
+  return apiFetch<{ ok: true; referral: ReferralRow }>("/api/referrals/record", {
+    method: "POST",
+    body: JSON.stringify({ name }),
   });
 }
 
