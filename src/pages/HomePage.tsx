@@ -2,6 +2,7 @@ import type { CSSProperties } from "react";
 import { Link } from "react-router-dom";
 import { BuffaloHeroImg } from "../BuffaloHeroImg";
 import { ConstructionBanner } from "../ConstructionBanner";
+import { ReferrerWidget } from "../components/ReferrerWidget";
 import { SeoHead } from "../seo/SeoHead";
 import { getSiteOrigin } from "../seo/siteUrl";
 import { TransferApp } from "../transfer/TransferApp";
@@ -170,6 +171,7 @@ export default function HomePage() {
           </p>
         </div>
 
+        <ReferrerWidget />
         <ConstructionBanner />
       </div>
     </>
