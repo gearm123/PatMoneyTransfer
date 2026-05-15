@@ -1459,6 +1459,11 @@ textarea {
   color: var(--ink);
   font-size: 0.78rem;
 }
+.tf .flow-step-lead--pay .flow-step-desc--mock {
+  margin-top: 0.18rem;
+  color: #0f766e;
+  font-weight: 600;
+}
 .tf .flow-step-lead--pay {
   border-bottom: none !important;
   flex: 0 0 auto;

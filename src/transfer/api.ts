@@ -4,6 +4,7 @@ export type TransferConfig = {
   /** Legacy: true when using Stripe. Prefer checkoutReady. */
   stripe: boolean;
   paymentProvider: "stripe" | "thunes";
+  thunesMode?: "mock" | "live";
   /** Card checkout (Stripe or Thunes Accept) is configured on the server. */
   checkoutReady: boolean;
   /** ISO 3166-1 alpha-3 — same values Thunes MT sends as `source.country_iso_code`. */

@@ -60,6 +60,7 @@ function initialConfigState(): {
   ok: boolean;
   banks: { code: string; name: string }[];
   sourceCountries: { code: string; label: string }[];
+  thunesMode: "mock" | "live";
 } {
   const cached = readTransferConfigCache();
   if (cached) {
@@ -69,13 +70,14 @@ function initialConfigState(): {
       banks: cached.thaiBanks?.length ? cached.thaiBanks : [],
       sourceCountries:
         cached.sourceCountries && cached.sourceCountries.length > 0 ? cached.sourceCountries : FALLBACK_SOURCE_COUNTRIES,
+      thunesMode: cached.thunesMode === "mock" ? "mock" : "live",
     };
   }
   // Show the form immediately; getTransferConfig() runs in useEffect and updates lists / may set ok to false
   if (defaultPk) {
-    return { ok: true, banks: [], sourceCountries: FALLBACK_SOURCE_COUNTRIES };
+    return { ok: true, banks: [], sourceCountries: FALLBACK_SOURCE_COUNTRIES, thunesMode: "live" };
   }
-  return { ok: true, banks: [], sourceCountries: FALLBACK_SOURCE_COUNTRIES };
+  return { ok: true, banks: [], sourceCountries: FALLBACK_SOURCE_COUNTRIES, thunesMode: "live" };
 }
 
 type Step = 1 | 2 | 3 | 4 | 5;
@@ -124,6 +126,7 @@ export function TransferApp({ layout = "default" }: TransferAppProps) {
   const [sourceCountries, setSourceCountries] = useState<{ code: string; label: string }[]>(
     () => initialConfigState().sourceCountries
   );
+  const [thunesMode, setThunesMode] = useState<"mock" | "live">(() => initialConfigState().thunesMode);
   const [step, setStep] = useState<Step>(1);
   const [fromCountry, setFromCountry] = useState("USA");
   const [toCountry, setToCountry] = useState("THA");
@@ -175,6 +178,7 @@ export function TransferApp({ layout = "default" }: TransferAppProps) {
           setConfigOk(c.checkoutReady ?? c.stripe);
           if (c.thaiBanks?.length) setBankList(c.thaiBanks);
           if (c.sourceCountries?.length) setSourceCountries(c.sourceCountries);
+          setThunesMode(c.thunesMode === "mock" ? "mock" : "live");
           writeTransferConfigCache(c);
           return;
         } catch {
@@ -212,6 +216,23 @@ export function TransferApp({ layout = "default" }: TransferAppProps) {
         const path = window.location.pathname + window.location.hash;
         window.history.replaceState({}, "", path);
       });
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const p = new URLSearchParams(window.location.search);
+    const transferId = p.get("transferId");
+    if (p.get("transferAborted") === "1") {
+      setErr(transferId ? `Payment was cancelled for transfer ${transferId}.` : "Payment was cancelled.");
+      const path = window.location.pathname + window.location.hash;
+      window.history.replaceState({}, "", path);
+      return;
+    }
+    if (p.get("transferError") === "1") {
+      setErr(transferId ? `Payment failed for transfer ${transferId}.` : "Payment failed.");
+      const path = window.location.pathname + window.location.hash;
+      window.history.replaceState({}, "", path);
+    }
   }, []);
 
   const refreshQuote = useCallback(() => {
@@ -756,10 +777,15 @@ export function TransferApp({ layout = "default" }: TransferAppProps) {
                   ) : null}
                 </p>
                 <p className="flow-step-desc">You are redirected to a secure Thunes page to pay. You will return here to confirm your send to Thailand.</p>
+                {thunesMode === "mock" ? (
+                  <p className="flow-step-desc flow-step-desc--mock">
+                    Mock mode: this opens a hosted demo payment page so you can test pay, cancel, and fail paths without moving real money.
+                  </p>
+                ) : null}
               </div>
               <div className="flow-step-main">
                 <a className="btn btn-primary" href={thunesPaymentUrl} rel="noreferrer" target="_self">
-                  Open secure payment
+                  {thunesMode === "mock" ? "Open mock payment" : "Open secure payment"}
                 </a>
               </div>
               <div className="flow-actions flow-step-actions">
