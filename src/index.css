@@ -1468,6 +1468,140 @@ textarea {
   border-bottom: none !important;
   flex: 0 0 auto;
 }
+.tf .flow-pay-thunes {
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+.tf .thunes-pay-shell {
+  display: flex;
+  flex: 1 1 0;
+  min-height: 0;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+.tf .thunes-pay-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 16px;
+  padding: 0.95rem 0.95rem 1rem;
+  background:
+    radial-gradient(circle at top right, rgba(125, 211, 252, 0.18), transparent 28%),
+    linear-gradient(145deg, #0f172a 0%, #172554 52%, #0b1120 100%);
+  color: #eff6ff;
+  box-shadow: 0 14px 32px -18px rgba(15, 23, 42, 0.75);
+}
+.tf .thunes-pay-card__chip {
+  width: 2rem;
+  height: 1.45rem;
+  border-radius: 0.4rem;
+  background: linear-gradient(145deg, #fcd34d, #f59e0b);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.3);
+}
+.tf .thunes-pay-card__brand {
+  margin-top: 0.7rem;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #7dd3fc;
+}
+.tf .thunes-pay-card__amount {
+  margin-top: 0.55rem;
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: #f8fafc;
+}
+.tf .thunes-pay-card__meta {
+  margin-top: 0.8rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 0.75rem;
+  font-size: 0.62rem;
+  color: rgba(226, 232, 240, 0.8);
+}
+.tf .thunes-pay-card__meta strong {
+  display: block;
+  margin-top: 0.16rem;
+  font-size: 0.74rem;
+  color: #fff;
+  font-weight: 700;
+  text-align: right;
+}
+.tf .thunes-pay-panel {
+  border-radius: 14px;
+  padding: 0.8rem;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  border: 1px solid rgba(30, 58, 95, 0.12);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75), 0 8px 24px -18px rgba(15, 23, 42, 0.32);
+}
+.tf .thunes-pay-panel__topline {
+  margin-bottom: 0.55rem;
+}
+.tf .thunes-pay-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.5rem;
+  padding: 0.12rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+.tf .thunes-pay-badge--mock {
+  background: rgba(13, 148, 136, 0.12);
+  color: #0f766e;
+}
+.tf .thunes-pay-badge--live {
+  background: rgba(30, 64, 175, 0.1);
+  color: #1d4ed8;
+}
+.tf .thunes-pay-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 0.38rem;
+  margin-bottom: 0.7rem;
+}
+.tf .thunes-pay-summary__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem;
+  font-size: 0.7rem;
+  color: var(--muted);
+}
+.tf .thunes-pay-summary__row strong {
+  color: var(--navy-2);
+  font-size: 0.74rem;
+}
+.tf .thunes-pay-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 2.6rem;
+  border-radius: 12px;
+  padding: 0.6rem 0.85rem;
+  background: linear-gradient(145deg, #0f172a, #1d4ed8);
+  color: #fff;
+  text-decoration: none;
+  font-size: 0.86rem;
+  font-weight: 700;
+  box-shadow: 0 10px 24px -16px rgba(29, 78, 216, 0.7);
+}
+.tf .thunes-pay-cta:hover {
+  text-decoration: none;
+  filter: brightness(1.03);
+}
+.tf .thunes-pay-note {
+  margin: 0.6rem 0 0;
+  font-size: 0.64rem;
+  line-height: 1.45;
+  color: var(--muted);
+}
 .tf .flow-step--pay .flow-step-main--pay,
 .tf .flow-step-main--pay {
   flex: 1 1 0;
@@ -1482,6 +1616,16 @@ textarea {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+}
+@media (min-width: 720px) {
+  .tf .thunes-pay-shell {
+    flex-direction: row;
+    align-items: stretch;
+  }
+  .tf .thunes-pay-card,
+  .tf .thunes-pay-panel {
+    flex: 1 1 0;
+  }
 }
 .tf .pay-form--embedded {
   flex: 1;
