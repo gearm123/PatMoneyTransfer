@@ -3,9 +3,11 @@ import { Link } from "react-router-dom";
 import { BuffaloHeroImg } from "../BuffaloHeroImg";
 import { ConstructionBanner } from "../ConstructionBanner";
 import { ReferrerWidget } from "../components/ReferrerWidget";
+import { RiaTransferMoneyLogo } from "../components/RiaTransferMoneyLogo";
 import { SeoHead } from "../seo/SeoHead";
 import { getSiteOrigin } from "../seo/siteUrl";
-import { TransferApp } from "../transfer/TransferApp";
+import { RiaFrontDoorFlow } from "../transfer/RiaFrontDoorFlow";
+import { RiaPartnerMockFlow } from "../transfer/RiaPartnerMockFlow";
 
 const STRIPE_FLAGS: { flag: string; style: CSSProperties }[] = [
   { flag: "🇺🇸", style: { top: "4%", right: "6%" } },
@@ -38,21 +40,32 @@ const CURRENCY_DECO: { s: string; style: CSSProperties }[] = [
 /**
  * One viewport: no page scroll. Buffalo centered; payment card fills the rest.
  */
-export default function HomePage() {
+type HomePageProps = {
+  transferMode?: "affiliate" | "partner";
+};
+
+export default function HomePage({ transferMode = "affiliate" }: HomePageProps) {
   const origin = getSiteOrigin();
+  const isPartner = transferMode === "partner";
   const homeJson = {
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: "BuffaloMoneySend",
-    url: `${origin}/`,
-    description: "Send money to Thailand: pay with your card; recipients receive THB. Clear estimate, secure checkout.",
+    url: `${origin}${isPartner ? "/partner" : "/"}`,
+    description: isPartner
+      ? "Preview the full Ria partner transfer flow UI inside the BuffaloMoneySend shell."
+      : "Collect Ria transfer details inside BuffaloMoneySend, then continue with the affiliate redirect flow.",
   };
   return (
     <>
       <SeoHead
-        title="BuffaloMoneySend — Send to Thailand in THB"
-        description="BuffaloMoneySend — pay from your country with your card; recipients receive in Thailand (THB). Clear estimate, secure checkout."
-        path="/"
+        title={isPartner ? "BuffaloMoneySend — Ria Partner Flow" : "BuffaloMoneySend — Ria Affiliate Handoff"}
+        description={
+          isPartner
+            ? "Preview the full Ria partner integration flow UI while the backend remains inactive."
+            : "Collect sender and recipient details, then continue from BuffaloMoneySend to the Ria affiliate route."
+        }
+        path={isPartner ? "/partner" : "/"}
         jsonLd={homeJson}
       />
       <div className="shell">
@@ -131,6 +144,17 @@ export default function HomePage() {
             decoding="async"
           />
         </div>
+        {!isPartner ? (
+          <aside className="shell__ria-disclosure" aria-label="Ria affiliation disclosure">
+            <RiaTransferMoneyLogo className="shell__ria-logo" />
+            <p className="shell__ria-copy">
+              BuffaloMoneySend may earn commission when you continue to Ria Money Transfer through our partner link.
+            </p>
+            <p className="shell__ria-copy shell__ria-copy--muted">
+              Final pricing, availability, identity checks, and transfer completion are handled by Ria Money Transfer.
+            </p>
+          </aside>
+        ) : null}
         <p className="shell__memorial-note">
           <span className="shell__memorial-note-intro">this website is dedicated to Sasithon Wangyangnok</span>
           <span className="shell__memorial-note-line">she will never be forgotten ❤️</span>
@@ -153,7 +177,7 @@ export default function HomePage() {
 
         <div className="shell__work">
           <main className="shell__main" id="main" aria-label="Payment">
-            <TransferApp layout="hub" />
+            {isPartner ? <RiaPartnerMockFlow layout="hub" /> : <RiaFrontDoorFlow layout="hub" mode="affiliate" />}
           </main>
           <nav className="shell__landing-nav shell__landing-nav--below" aria-label="Guides and help">
             <Link to="/guides" className="shell__landing-link">
@@ -170,8 +194,7 @@ export default function HomePage() {
             BuffaloMoneySend
           </p>
         </div>
-
-        <ReferrerWidget />
+        {!isPartner ? <ReferrerWidget /> : null}
         <ConstructionBanner />
       </div>
     </>

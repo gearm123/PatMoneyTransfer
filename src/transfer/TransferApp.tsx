@@ -143,7 +143,7 @@ export function TransferApp({ layout = "default" }: TransferAppProps) {
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [activePk, setActivePk] = useState<string>(defaultPk);
   const [doneTransfer, setDoneTransfer] = useState<Transfer | null>(null);
-  const [payMode, setPayMode] = useState<"stripe" | "thunes" | null>(null);
+  const [payMode, setPayMode] = useState<"stripe" | "thunes" | "ria" | null>(null);
   const [thunesPaymentUrl, setThunesPaymentUrl] = useState<string | null>(null);
   const [thunesCompleting, setThunesCompleting] = useState(false);
   const [err, setErr] = useState("");
@@ -310,7 +310,7 @@ export function TransferApp({ layout = "default" }: TransferAppProps) {
       });
       setPayMode(r.paymentProvider);
       setDoneTransfer(r.transfer);
-      if (r.paymentProvider === "thunes") {
+      if (r.paymentProvider === "thunes" || r.paymentProvider === "ria") {
         setClientSecret(null);
         setThunesPaymentUrl(r.paymentUrl);
         if (!r.paymentUrl) {
@@ -777,11 +777,6 @@ export function TransferApp({ layout = "default" }: TransferAppProps) {
                   ) : null}
                 </p>
                 <p className="flow-step-desc">You are redirected to a secure Thunes page to pay. You will return here to confirm your send to Thailand.</p>
-                {thunesMode === "mock" ? (
-                  <p className="flow-step-desc flow-step-desc--mock">
-                    Mock mode: this opens a hosted demo payment page so you can test pay, cancel, and fail paths without moving real money.
-                  </p>
-                ) : null}
               </div>
               <div className="flow-step-main flow-step-main--pay">
                 <div className="flow-pay-thunes">
@@ -806,10 +801,36 @@ export function TransferApp({ layout = "default" }: TransferAppProps) {
                         <span className={`thunes-pay-badge thunes-pay-badge--${thunesMode}`}>
                           {thunesMode === "mock" ? "Demo payment page" : "Hosted secure checkout"}
                         </span>
+                        <span className="thunes-pay-lock">TLS secured</span>
                       </div>
 
-                      <div className="thunes-pay-summary">
-                        <div className="thunes-pay-summary__row">
+                      <div className="thunes-pay-hero">
+                        <div>
+                          <p className="thunes-pay-eyebrow">Card payment</p>
+                          <h4 className="thunes-pay-heading">
+                            {thunesMode === "mock" ? "Review and open the demo checkout" : "Review and continue to secure checkout"}
+                          </h4>
+                          <p className="thunes-pay-copy">
+                            {thunesMode === "mock"
+                              ? "No real card is charged in demo mode."
+                              : "Your card details are entered on the hosted Thunes page."}
+                          </p>
+                        </div>
+                        <div className="thunes-pay-brands" aria-hidden>
+                          <span className="thunes-pay-brand">VISA</span>
+                          <span className="thunes-pay-brand">MC</span>
+                          <span className="thunes-pay-brand">AMEX</span>
+                        </div>
+                      </div>
+
+                      <a className="thunes-pay-cta" href={thunesPaymentUrl} rel="noreferrer" target="_self">
+                        {thunesMode === "mock"
+                          ? `Pay ${typeof doneTransfer.totalCharged === "number" ? doneTransfer.totalCharged.toFixed(2) : doneTransfer.amountSend} ${doneTransfer.fromCurrency}`
+                          : `Continue to pay ${typeof doneTransfer.totalCharged === "number" ? doneTransfer.totalCharged.toFixed(2) : doneTransfer.amountSend} ${doneTransfer.fromCurrency}`}
+                      </a>
+
+                      <div className="thunes-pay-summary-grid">
+                        <div className="thunes-pay-summary-card">
                           <span>Total charge</span>
                           <strong className="mono">
                             {typeof doneTransfer.totalCharged === "number"
@@ -818,26 +839,22 @@ export function TransferApp({ layout = "default" }: TransferAppProps) {
                             {doneTransfer.fromCurrency}
                           </strong>
                         </div>
-                        <div className="thunes-pay-summary__row">
+                        <div className="thunes-pay-summary-card">
                           <span>Recipient gets</span>
                           <strong className="mono">
                             {doneTransfer.thbReceiveEstimate} {localCcy}
                           </strong>
                         </div>
-                        <div className="thunes-pay-summary__row">
+                        <div className="thunes-pay-summary-card thunes-pay-summary-card--wide">
                           <span>Transfer id</span>
                           <strong className="mono">{doneTransfer.id.slice(0, 8)}...</strong>
                         </div>
                       </div>
 
-                      <a className="thunes-pay-cta" href={thunesPaymentUrl} rel="noreferrer" target="_self">
-                        {thunesMode === "mock" ? "Open mock payment" : "Continue to secure payment"}
-                      </a>
-
                       <p className="thunes-pay-note">
                         {thunesMode === "mock"
-                          ? "You will land on a demo hosted payment page where you can simulate a successful payment, cancellation, or failure."
-                          : "You will be redirected to a hosted Thunes payment page and returned here automatically after payment."}
+                          ? "The next screen is a demo hosted payment page where you can simulate pay, cancel, or fail."
+                          : "You will return here automatically after the hosted Thunes payment completes."}
                       </p>
                     </div>
                   </div>

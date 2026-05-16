@@ -11,7 +11,8 @@ export default function App() {
     <>
       <AnalyticsSpaListener />
       <Routes>
-        <Route path="/" element={<HomePage />} />
+        <Route path="/" element={<HomePage transferMode="affiliate" />} />
+        <Route path="/partner" element={<HomePage transferMode="partner" />} />
         <Route path="/guides" element={<GuidesIndexPage />} />
         <Route path="/guides/:slug" element={<GuideArticlePage />} />
         <Route path="/faq" element={<FaqPage />} />

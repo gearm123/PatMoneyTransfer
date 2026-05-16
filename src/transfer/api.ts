@@ -3,8 +3,9 @@ import { apiFetch } from "../api/client";
 export type TransferConfig = {
   /** Legacy: true when using Stripe. Prefer checkoutReady. */
   stripe: boolean;
-  paymentProvider: "stripe" | "thunes";
+  paymentProvider: "stripe" | "thunes" | "ria";
   thunesMode?: "mock" | "live";
+  riaMode?: "mock" | "live";
   /** Card checkout (Stripe or Thunes Accept) is configured on the server. */
   checkoutReady: boolean;
   /** ISO 3166-1 alpha-3 — same values Thunes MT sends as `source.country_iso_code`. */
@@ -27,8 +28,25 @@ export type Transfer = {
   totalCharged?: number;
   thbReceiveEstimate: number;
   fxRateUsed: number;
-  sender: { fullName: string; email: string };
-  thaiRecipient: { fullName: string; bankCode: string; accountNumber: string };
+  sender: {
+    fullName: string;
+    email: string;
+    phone?: string;
+    billingAddress1?: string;
+    billingAddress2?: string;
+    billingCity?: string;
+    billingState?: string;
+    billingPostalCode?: string;
+  };
+  thaiRecipient: {
+    fullName: string;
+    bankCode: string;
+    accountNumber: string;
+    bankName?: string;
+    deliveryMethod?: "bank" | "cash" | "wallet";
+    phone?: string;
+    payoutCity?: string;
+  };
   paymentIntentId: string | null;
   status: string;
   /** Set when Thunes payout fails (card may still have succeeded). */
@@ -37,6 +55,9 @@ export type Transfer = {
   thunesQuotationId?: number;
   thunesTransactionId?: number;
   collectionOrderId?: string | null;
+  flowMode?: "public" | "partner";
+  riaQuoteId?: number;
+  riaTransferId?: number;
   /** Which server rail handled this transfer (`thunes_e2e`, `stripe_thunes_payout`, …). */
   railId?: string;
 };
@@ -60,6 +81,10 @@ export function getTransferConfig() {
   return apiFetch<TransferConfig>("/api/transfer/config");
 }
 
+export function getPartnerTransferConfig() {
+  return apiFetch<Omit<TransferConfig, "stripe"> & { paymentProvider: "ria" }>("/api/partner-transfer/config");
+}
+
 export function createTransfer(body: {
   fromCountry: string;
   fromCurrency: string;
@@ -72,13 +97,47 @@ export function createTransfer(body: {
 }) {
   return apiFetch<{
     transfer: Transfer;
-    paymentProvider: "stripe" | "thunes";
-    thunesOrderId: string;
+    paymentProvider: "stripe" | "thunes" | "ria";
+    riaOrderId: string;
     paymentUrl: string | null;
     orderStatus: string;
     clientSecret: string;
     publishableKey: string;
   }>("/api/transfer/create", {
+    method: "POST",
+    body: JSON.stringify({ ...body, toCountry: "THA" }),
+  });
+}
+
+export function createPartnerTransfer(body: {
+  fromCountry: string;
+  fromCurrency: string;
+  amount: number;
+  senderName: string;
+  senderEmail: string;
+  senderPhone?: string;
+  billingAddress1?: string;
+  billingAddress2?: string;
+  billingCity?: string;
+  billingState?: string;
+  billingPostalCode?: string;
+  recipientName: string;
+  recipientBankName?: string;
+  thaiBankCode: string;
+  thaiAccountNumber: string;
+  deliveryMethod?: "bank" | "cash" | "wallet";
+  recipientPhone?: string;
+  payoutCity?: string;
+}) {
+  return apiFetch<{
+    transfer: Transfer;
+    paymentProvider: "ria";
+    riaOrderId: string;
+    paymentUrl: string | null;
+    orderStatus: string;
+    clientSecret: string;
+    publishableKey: string;
+  }>("/api/partner-transfer/create", {
     method: "POST",
     body: JSON.stringify({ ...body, toCountry: "THA" }),
   });
@@ -93,6 +152,13 @@ export function recordReferral(name: string) {
 
 export function completeTransfer(params: { paymentIntentId: string } | { transferId: string }) {
   return apiFetch<{ ok: true; transfer: Transfer }>("/api/transfer/complete", {
+    method: "POST",
+    body: JSON.stringify(params),
+  });
+}
+
+export function completePartnerTransfer(params: { transferId: string }) {
+  return apiFetch<{ ok: true; transfer: Transfer }>("/api/partner-transfer/complete", {
     method: "POST",
     body: JSON.stringify(params),
   });
